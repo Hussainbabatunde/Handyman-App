@@ -15,7 +15,6 @@ export default function Signup() {
     const [confirm, setConfirm] = useState(false);
     const [focusedInput, setFocusedInput] = useState<any>(null); // Track focused input
     const [checked, setChecked] = useState(false)
-          console.log("signup page: ", phoneNumber);
 
     const validateInputs = () => {
         let newErrors: { [key: string]: string } = {};

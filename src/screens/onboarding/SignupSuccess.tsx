@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import SanlamLogo from "../../../assets/images/sanlamLogo.png"
 import WomanWalking from "../../../assets/images/successfulSignup.png"
@@ -6,9 +6,13 @@ import AuthSubmitButton from "../../component/SubmitActionButton";
 import { TextBold, TextMedium, TextRegular } from "../../component/StyledText";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import AppContext from "../../context";
+import { OnboardContext } from ".";
 
 export default function SignupSuccess () {
   const navigation = useNavigation<StackNavigationProp<any>>();
+  const { countries ,dispatch, userData, setUserData, setLogOutUser } = useContext<any>(AppContext);
+  const {registerRes} = useContext(OnboardContext)
 
 
     return (
@@ -19,12 +23,15 @@ export default function SignupSuccess () {
                 <Image source={WomanWalking} style={styles.womanWalkingImg} />
                 <TextBold style={styles.descPage}>You are all set!</TextBold>
 <TextRegular style={{color: "#696969", fontSize: 14, textAlign: "center", maxWidth: 324, marginTop: 16, marginBottom: 22}}>Let’s do great things together</TextRegular>
-                <Pressable onPress={() => navigation.navigate("TabNavigation", {
-      screen: "DashboardNavigation",
-      params: {
-        screen: "Dashboard",
-      },
-    })} style={{backgroundColor: "#FA4E61", paddingHorizontal: 60, paddingVertical: 13, borderRadius: 25}}>
+                <Pressable onPress={async () =>{
+                    await setUserData(dispatch, registerRes?.accessToken, {loggedIn: "true", ...registerRes}, registerRes?.data);
+    //                  navigation.navigate("TabNavigation", {
+    //   screen: "DashboardNavigation",
+    //   params: {
+    //     screen: "Dashboard",
+    //   },
+    // })
+    }} style={{backgroundColor: "#FA4E61", paddingHorizontal: 60, paddingVertical: 13, borderRadius: 25}}>
                     <TextMedium style={{color: "white", fontSize: 15, }}>Get Started</TextMedium>
                 </Pressable>
             </View>

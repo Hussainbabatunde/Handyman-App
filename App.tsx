@@ -52,6 +52,7 @@ import AppContext from "./src/context";
 import { navigationRef } from "./src/navigation/RootNavigation";
 // import TabNavigation from "./src/navigation/TabNavigation";
 import OnboardStackScreen from "./src/screens/onboarding";
+import TabNavigation from "./src/navigation/TabNavigation";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -286,8 +287,8 @@ function App(): React.JSX.Element {
           <Stack.Navigator>
             {state.userToken ? (
               <Stack.Screen
-                name="HomeScreen"
-                component={HomeScreen}
+                name="TabNavigation"
+                component={TabNavigation}
                 options={{ headerShown: false }}
               />
             ) : (

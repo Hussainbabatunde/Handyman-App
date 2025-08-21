@@ -15,6 +15,7 @@ import delivery from "../../../assets/images/delivery.png"
 import more from "../../../assets/images/more.png"
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
+import AppContext from '../../context'
 
 const Dashboard = () => {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -52,6 +53,12 @@ const Dashboard = () => {
             img: more
         }
     ]
+    const { dispatch, logoutUser, removeUserData, userData } =
+    React.useContext<any>(AppContext);
+
+    const logoutOnSubmit = React.useCallback(async () => {
+    await logoutUser(dispatch);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -111,6 +118,36 @@ const Dashboard = () => {
     </Pressable>
   ))}
 </View>
+
+<Pressable
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel="Log out"
+              onPress={async () => {
+                logoutOnSubmit();
+              }}
+              style={{
+                paddingVertical: 15,
+                backgroundColor: "#33ba76",
+                borderRadius: 5,
+                width: "100%",
+                marginTop: 22,
+                opacity: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "row",
+              }}
+            >
+              <TextMedium
+                style={{
+                  color: "#101011",
+                  fontWeight: "600",
+                  fontSize: 14,
+                }}
+              >
+                Logout
+              </TextMedium>
+            </Pressable>
 
       </View>
       </SafeAreaView>

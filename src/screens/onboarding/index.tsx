@@ -17,7 +17,7 @@ import GetStarted from "./GetStarted";
 import Signup from "./Signup";
 import SignupSuccess from "./SignupSuccess";
 import { createUserType, RegisterResponse, validatePhoneResponse, validateType, verifyPhoneResType, verifyType } from "../../services/ApiTypes";
-import { registerApi, validatePhoneApi, verifyPhoneApi } from "../../services";
+import { loginPhoneApi, registerApi, validatePhoneApi, verifyPhoneApi } from "../../services";
 import Password from "./Password";
 import ConfirmPassword from "./ConfirmPassword";
 
@@ -39,7 +39,8 @@ export default function OnboardStackScreen() {
     verifyPhone: false,
     validatePhone: false,
     signup: false,
-    register: false
+    register: false,
+    login: false
   });
   const [verifyPhoneRes, setVerifyPhoneRes] = useState<verifyPhoneResType | null>(null)
   const [validatePhoneRes, setValidatePhoneRes] = useState<validatePhoneResponse | null>(null)
@@ -121,13 +122,12 @@ const verifyPhoneApiCall = async (value: verifyType) => {
   const registerApiCall = async () => {
     Keyboard.dismiss();
     
-    console.log("values profile: ", valueSetupProfile);
     setIsSubmitting((prev) => ({...prev, register: true}));
     
     await registerApi(valueSetupProfile)
       .then((response) => response)
       .then(async (data) => {
-        console.log("register: ", data);
+        // console.log("register: ", data);
         setRegisterRes(data)
     setIsSubmitting((prev) => ({...prev, register: false}));
         navigation.navigate("OnboardStackScreen", {
@@ -144,6 +144,40 @@ const verifyPhoneApiCall = async (value: verifyType) => {
     setIsSubmitting((prev) => ({...prev, register: false})));
   };
 
+  const loginApiCall = async (password: string) => {
+    Keyboard.dismiss();
+    setIsSubmitting((prev) => ({...prev, login: true}));
+    let sentData = {
+      phoneNumber: phoneNumber,
+      password: password
+    }
+    
+    await loginPhoneApi(sentData)
+      .then((response) => response)
+      .then(async (data) => {
+        console.log("login res: ", data);
+        setIsSubmitting((prev) => ({...prev, login: false}));
+        await setUserData(dispatch, data?.accessToken, {loggedIn: "true", ...data}, data?.user);
+        // setVerifyPhoneRes(data)
+        // navigation.navigate("OnboardStackScreen", {
+        //   screen: "ValidatePhone",
+        // });
+    //     navigation.navigate("TabBancNavigation", {
+    //   screen: "ProfileNavigation",
+    //   params: {
+    //     screen: "TransactionPin",
+    //   },
+    // })
+      })
+      .catch((error) => {
+    setIsSubmitting((prev) => ({...prev, login: false}));
+        console.log(error?.response, "error_____");
+        errorResponse({ error, dispatch });
+      })
+      .then(() => 
+    setIsSubmitting((prev) => ({...prev, login: false})));
+  };
+
   return (
     <OnboardContext.Provider
       value={{
@@ -157,7 +191,9 @@ const verifyPhoneApiCall = async (value: verifyType) => {
         phoneNumber,
         valueSetupProfile, 
         setValueSetupProfile,
-        registerApiCall
+        registerApiCall,
+        registerRes,
+        loginApiCall
       }}
     >
       <OnboardStack.Navigator
