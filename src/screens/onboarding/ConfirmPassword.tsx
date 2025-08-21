@@ -7,6 +7,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 // import { TextBold, TextMedium, TextRegular } from '../../components/StyledText'
 import { BackLogin } from '../../component/SvgFiles'
 import { OnboardContext } from '.'
+import { TextMedium } from '../../component/StyledText'
+import ModalLoading from '../../component/modals/ModalLoading'
+import AuthSubmitButton from '../../component/SubmitActionButton'
 
 const { width } = Dimensions.get('window')
 
@@ -16,7 +19,13 @@ const dialPadSize = width / 2
 
 const pinsize = 6;
 
-function DialPad({ onPress }: { onPress: (item: typeof dialpad[number]) => void }) {
+type DialPadProps = {
+  onPress: (item: typeof dialpad[number]) => void;
+  showPassword: boolean;
+  setShowPassword: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+function DialPad({ onPress, showPassword, setShowPassword }: DialPadProps) {
   
   return <FlatList
     numColumns={3}
@@ -33,9 +42,10 @@ function DialPad({ onPress }: { onPress: (item: typeof dialpad[number]) => void 
         }}>
         {item == 'biometrics' ?
 
-          <View style={styles.fingerPrint}>
+          <Pressable onPress={()=> setShowPassword(!showPassword)} style={styles.fingerPrint}>
             {/* <MaterialIcons name="fingerprint" size={43} color="#0075C9" /> */}
-          </View>
+                        {showPassword?<Ionicons name="eye-outline" size={30} color="black" /> : <Ionicons name="eye-off-outline" size={30} color="black" />}
+          </Pressable>
           :
           item == 'del' ?
 
@@ -51,30 +61,39 @@ function DialPad({ onPress }: { onPress: (item: typeof dialpad[number]) => void 
     }} />
 }
 
-const PinCode = () => {
+const ConfirmPassword = () => {
 
   const [code, setCode] = useState<number[]>([])
   const navigation = useNavigation<StackNavigationProp<any>>()
   const [confirm, setConfirm] = useState(false)
   const [forgotPassword, setForgotPassword] = useState(false)
-  const { valueSetupProfile, setValueSetupProfile } =
+  const { valueSetupProfile, setValueSetupProfile, isSubmitting, registerApiCall, phoneNumber } =
           useContext(OnboardContext);
+    const [showPassword, setShowPassword] = useState(false)
+          console.log("values profile: ", phoneNumber);
+          
           
 
   useEffect(() => {
-    if (code.length == 6) {
-      setConfirm(true)
-      handleSubmit()
-    }
-    else if (code.length < 6) {
-      setConfirm(false)
-    }
-  }, [code])
+  let timer: NodeJS.Timeout;
+
+  if (code.length === 6) {
+    setConfirm(true);
+    let passwordString = code.join('');
+      setValueSetupProfile((prevState: any) => ({
+            ...prevState,
+            "confirmPassword": passwordString, "phoneNumber": phoneNumber
+        }));
+  } else {
+    setConfirm(false);
+  }
+}, [code]);
+
 
   const handleSubmit = async () => {
     let passwordString = code.join('');
-
-    navigation.navigate('SignupSuccess')
+    console.log("values profile: ", valueSetupProfile);
+    await registerApiCall()
   };
 
   const handleSwitchUser = async ()=>{
@@ -102,35 +121,54 @@ const PinCode = () => {
                             <Text
                                 style={[styles.nameIdentifier, { marginTop: 25, fontWeight: 600}]}
                             >
-                                Let’s get started
+                                Verify PIN
                             </Text>
-                            <Text style={styles.descText}>Please enter your phone number below to get started</Text>
+                            <Text style={styles.descText}>Verify 6-digits login pin</Text>
 
         <View style={styles.textContainer}>
         </View>
 
         <View style={styles.pinContainer}>
-          <View
-            style={{ flexDirection: 'row', gap: 10 }}>
-            {[...Array(pinsize).keys()].map((i) => {
-              const isSelected = i < code.length; // Check if the index is less than the code length
-
-              return (
-                <View
-                  key={i.toString()}
-                  style={{
-                    width: 12,
-                    height: 12,
-                    borderRadius: 50,
-                    borderWidth: isSelected ? 0 : 1,
-                    borderColor: 'black',
-                    marginBottom: 10,
-                    backgroundColor: isSelected ? '#E13548' : 'white',
-                  }}
-                />
-              );
-            })}
-          </View>
+          {showPassword ? 
+                    <View style={{ flexDirection: "row", gap: 10 }}>
+                {[...Array(pinsize).keys()].map((i) => {
+                  const digit = code[i]; // get the digit at index i
+                  return (
+                    <TextMedium
+                      key={i.toString()}
+                      style={{
+                        fontSize: 20,
+                        marginBottom: 10,
+                        color: digit ? "#E13548" : "#D3D3D3",
+                      }}
+                    >
+                      {digit ? digit : "*"}
+                    </TextMedium>
+                  );
+                })}
+              </View>
+                    :
+                    <View
+                      style={{ flexDirection: 'row', gap: 10 }}>
+                      {[...Array(pinsize).keys()].map((i) => {
+                        const isSelected = i < code.length; // Check if the index is less than the code length
+          
+                        return (
+                          <View
+                            key={i.toString()}
+                            style={{
+                              width: 12,
+                              height: 12,
+                              borderRadius: 50,
+                              borderWidth: isSelected ? 0 : 1,
+                              borderColor: 'black',
+                              marginBottom: 10,
+                              backgroundColor: isSelected ? '#E13548' : 'white',
+                            }}
+                          />
+                        );
+                      })}
+                    </View>}
           <Pressable onPress={() => setForgotPassword(!forgotPassword)}>
             {/* <TextRegular style={styles.forgotPinText}>Forgot your PIN?</TextRegular> */}
           </Pressable>
@@ -148,10 +186,13 @@ const PinCode = () => {
               if (code.length == pinsize) return
               setCode(prevCode => [...prevCode, typedCode])
             }
-          }} />
+          }} showPassword={showPassword} setShowPassword={setShowPassword}  />
 
-          {/* <AuthSubmitButton handleSubmit={handleSubmit} marginTOP='0%' confirm={confirm} loading={isSubmitting} /> */}
-          {confirm && <ActivityIndicator color='#0075C9' size='large' />}
+          {code?.length == 6 &&<View style={{ width: "100%" }}>
+                    <AuthSubmitButton handleSubmit={handleSubmit} marginTOP={38} confirm={true} loading={false} title={"Submit"} buttonColor="#FA4E61" loadColor="black" textColor={"white"} />
+                </View>}
+          {/* {confirm && <ActivityIndicator color='#0075C9' size='large' />} */}
+          <ModalLoading verify={isSubmitting?.register} />
         </View>
 
       </View>
@@ -159,7 +200,7 @@ const PinCode = () => {
   )
 }
 
-export default PinCode
+export default ConfirmPassword
 
 const styles = StyleSheet.create({
   container: {

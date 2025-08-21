@@ -7,6 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 // import { TextBold, TextMedium, TextRegular } from '../../components/StyledText'
 import { BackLogin } from '../../component/SvgFiles'
 import { OnboardContext } from '.'
+import { TextMedium } from '../../component/StyledText'
 
 const { width } = Dimensions.get('window')
 
@@ -16,7 +17,14 @@ const dialPadSize = width / 2
 
 const pinsize = 6;
 
-function DialPad({ onPress }: { onPress: (item: typeof dialpad[number]) => void }) {
+type DialPadProps = {
+  onPress: (item: typeof dialpad[number]) => void;
+  showPassword: boolean;
+  setShowPassword: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+function DialPad({ onPress, showPassword, setShowPassword }: DialPadProps) {
+    
   
   return <FlatList
     numColumns={3}
@@ -33,9 +41,10 @@ function DialPad({ onPress }: { onPress: (item: typeof dialpad[number]) => void 
         }}>
         {item == 'biometrics' ?
 
-          <View style={styles.fingerPrint}>
+          <Pressable onPress={()=> setShowPassword(!showPassword)} style={styles.fingerPrint}>
             {/* <MaterialIcons name="fingerprint" size={43} color="#0075C9" /> */}
-          </View>
+            {showPassword?<Ionicons name="eye-outline" size={30} color="black" /> : <Ionicons name="eye-off-outline" size={30} color="black" />}
+          </Pressable>
           :
           item == 'del' ?
 
@@ -51,7 +60,7 @@ function DialPad({ onPress }: { onPress: (item: typeof dialpad[number]) => void 
     }} />
 }
 
-const PinCode = () => {
+const Password = () => {
 
   const [code, setCode] = useState<number[]>([])
   const navigation = useNavigation<StackNavigationProp<any>>()
@@ -59,11 +68,17 @@ const PinCode = () => {
   const [forgotPassword, setForgotPassword] = useState(false)
   const { valueSetupProfile, setValueSetupProfile } =
           useContext(OnboardContext);
+    const [showPassword, setShowPassword] = useState(false)
           
 
   useEffect(() => {
     if (code.length == 6) {
       setConfirm(true)
+    let passwordString = code.join('');
+      setValueSetupProfile((prevState: any) => ({
+            ...prevState,
+            "password": passwordString,
+        }));
       handleSubmit()
     }
     else if (code.length < 6) {
@@ -73,8 +88,9 @@ const PinCode = () => {
 
   const handleSubmit = async () => {
     let passwordString = code.join('');
-
-    navigation.navigate('SignupSuccess')
+navigation.navigate("OnboardStackScreen", {
+          screen: "ConfirmPassword",
+        });
   };
 
   const handleSwitchUser = async ()=>{
@@ -102,14 +118,33 @@ const PinCode = () => {
                             <Text
                                 style={[styles.nameIdentifier, { marginTop: 25, fontWeight: 600}]}
                             >
-                                Let’s get started
+                               Hi, {valueSetupProfile?.firstName}
                             </Text>
-                            <Text style={styles.descText}>Please enter your phone number below to get started</Text>
+                            <Text style={styles.descText}>Create a 6-digit secure login pin for your account</Text>
 
         <View style={styles.textContainer}>
         </View>
 
         <View style={styles.pinContainer}>
+          {showPassword ? 
+          <View style={{ flexDirection: "row", gap: 10 }}>
+      {[...Array(pinsize).keys()].map((i) => {
+        const digit = code[i]; // get the digit at index i
+        return (
+          <TextMedium
+            key={i.toString()}
+            style={{
+              fontSize: 20,
+              marginBottom: 10,
+              color: digit ? "#E13548" : "#D3D3D3",
+            }}
+          >
+            {digit ? digit : "*"}
+          </TextMedium>
+        );
+      })}
+    </View>
+          :
           <View
             style={{ flexDirection: 'row', gap: 10 }}>
             {[...Array(pinsize).keys()].map((i) => {
@@ -130,7 +165,7 @@ const PinCode = () => {
                 />
               );
             })}
-          </View>
+          </View>}
           <Pressable onPress={() => setForgotPassword(!forgotPassword)}>
             {/* <TextRegular style={styles.forgotPinText}>Forgot your PIN?</TextRegular> */}
           </Pressable>
@@ -148,10 +183,10 @@ const PinCode = () => {
               if (code.length == pinsize) return
               setCode(prevCode => [...prevCode, typedCode])
             }
-          }} />
+          }} showPassword={showPassword} setShowPassword={setShowPassword} />
 
           {/* <AuthSubmitButton handleSubmit={handleSubmit} marginTOP='0%' confirm={confirm} loading={isSubmitting} /> */}
-          {confirm && <ActivityIndicator color='#0075C9' size='large' />}
+          {/* {confirm && <ActivityIndicator color='#0075C9' size='large' />} */}
         </View>
 
       </View>
@@ -159,7 +194,7 @@ const PinCode = () => {
   )
 }
 
-export default PinCode
+export default Password
 
 const styles = StyleSheet.create({
   container: {

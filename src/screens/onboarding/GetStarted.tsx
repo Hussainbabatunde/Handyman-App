@@ -6,10 +6,10 @@ import AuthSubmitButton from "../../component/SubmitActionButton";
 import { TextBold, TextMedium, TextRegular } from "../../component/StyledText";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
+import Constants from 'expo-constants';
 
 export default function GetStarted () {
   const navigation = useNavigation<StackNavigationProp<any>>();
-
 
     return (
         <View style={[styles.container, {backgroundColor: "white"}]}>

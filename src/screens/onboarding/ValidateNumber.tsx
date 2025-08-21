@@ -1,10 +1,12 @@
 import { Entypo, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { useEffect, useRef, useState } from "react"
+import React, { useContext, useEffect, useRef, useState } from "react"
 import { Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import HiddenTextInput from "../../component/HiddenTextInput";
+import { OnboardContext } from ".";
+import ModalLoading from "../../component/modals/ModalLoading";
 
 export default function ValidatePhone () {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -19,7 +21,8 @@ export default function ValidatePhone () {
     // const {valuesSignup, ValidatePhoneApiCall, VerifyPhoneNumberApiCall, isSubmittingVerify} = useContext(OnboardBancContext)
     const [timeLeft, setTimeLeft] = useState(90); // total time in seconds
   const endTimeRef = useRef(Date.now() + 90 * 1000); // target time in ms
-  // console.log("valuesSignup ", valuesSignup);
+  const {verifyPhoneRes, phoneNumber, validatePhoneApiCall, isSubmitting} = useContext(OnboardContext)
+//   console.log("valuesSignup ", verifyPhoneRes);
   
 
     const handleOnPress= () =>{
@@ -37,9 +40,15 @@ export default function ValidatePhone () {
     }, [code])
 
     useEffect(()=>{
-        const initiate = () =>{
+        const initiate = async () =>{
         if(code?.length == MAX_CODE_LENGTH){
-            navigation.navigate('Signup')
+            // navigation.navigate('Signup')
+            let sentData = {
+                otp: code,
+                phoneNo: phoneNumber,
+                sessionId: verifyPhoneRes?.sessionId
+            }
+            await validatePhoneApiCall(sentData)
         }
     }
     initiate()
@@ -107,6 +116,7 @@ export default function ValidatePhone () {
             <Text style={styles.countDownText}>I haven’t received a code (0:09)</Text>
         </Pressable>
                     </ScrollView>
+                    <ModalLoading verify={isSubmitting?.validatePhone} />
         </SafeAreaView>
     )
 }

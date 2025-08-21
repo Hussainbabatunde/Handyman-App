@@ -3,7 +3,6 @@ import axios from 'axios';
 import Constants from 'expo-constants';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { CreateTransactionPin, UpdateTransactionPin, ValidatePhone, createProfileType, loginType, sentParams, sentVerifyPhoneData, setupPinType, swappedCurrency } from './ApiTypes';
 
 const API_URL = Constants.expoConfig?.extra?.eas?.API_URL;
 const REQUEST_TIMEOUT = Constants.expoConfig?.extra?.eas?.REQUEST_TIMEOUT;
@@ -29,8 +28,18 @@ axios.interceptors.request.use(
 );
 
 
-export const getCountriesApi = async () => {
-  const { data } = await axios.get(`customers/countries`);
+export const verifyPhoneApi = async (values: object) => {
+  const { data } = await axios.post(`auth/verify`, values);
+  return data;
+}
+
+export const validatePhoneApi = async (values: object) => {
+  const { data } = await axios.post(`auth/validate-otp`, values);
+  return data;
+}
+
+export const registerApi = async (values: object) => {
+  const { data } = await axios.post(`auth/register`, values);
   return data;
 }
 

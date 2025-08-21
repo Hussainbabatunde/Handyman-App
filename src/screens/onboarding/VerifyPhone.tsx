@@ -1,15 +1,33 @@
 import { Entypo, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React from "react"
+import React, { useContext, useState } from "react"
 import { Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
+import { TextBold, TextRegular } from "../../component/StyledText";
+import { Formik } from "formik";
+import * as Yup from "yup";
+import { OnboardContext } from ".";
+
+// ✅ Yup validation schema
+const validationSchema = Yup.object().shape({
+  phoneNumber: Yup.string()
+    .required("Phone number is required")
+    .matches(/^\d+$/, "Phone number must contain only digits")
+    .min(11, "Phone number must be at least 11 digits")
+    .max(15, "Phone number cannot be longer than 15 digits"),
+});
 
 export default function VerifyPhone () {
     const navigation = useNavigation<StackNavigationProp<any>>();
+    
+  const { verifyPhoneApiCall, isSubmitting } = useContext(OnboardContext);
 
-    const handleSubmit = () => {
-        navigation.navigate('ValidatePhone')
+    const handleSubmit = async (values: any) => {
+        values.phoneNo =  values.phoneNumber
+        delete values.phoneNumber
+        await verifyPhoneApiCall(values)
+        // navigation.navigate('ValidatePhone')
     }
 
     return(
@@ -32,11 +50,34 @@ export default function VerifyPhone () {
                         Let’s get started
                     </Text>
                     <Text style={styles.descText}>Please enter your phone number below to get started</Text>
+                    <Formik
+        initialValues={{ phoneNumber: "" }}
+        validationSchema={validationSchema}
+        onSubmit={(values) => {
+          handleSubmit(values);
+          // You can call your API or navigation here
+        }}
+      >
+        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+          <View>
                     <Text style={styles.labelText}>Phone number</Text>
-                    <TextInput style={styles.inputBody} placeholder="e.g 08023237743" placeholderTextColor={"#898A8D"} />
+                    <TextInput style={styles.inputBody} placeholder="e.g 08023237743" placeholderTextColor={"#898A8D"} keyboardType="phone-pad"
+              onChangeText={handleChange("phoneNumber")}
+              onBlur={handleBlur("phoneNumber")}
+              value={values.phoneNumber} />
+                    {errors.phoneNumber && touched.phoneNumber && (
+              <Text style={{ color: "red", marginTop: 5 }}>{errors.phoneNumber}</Text>
+            )}
+                    {/* <View style={styles.checkboxView}>
+                        <MaterialCommunityIcons name="checkbox-blank-outline" size={22} color="#ABABAB" />
+                        <TextRegular style={styles.checkboxText}>Are you an <TextBold>artisan</TextBold>?</TextRegular>
+                    </View> */}
                     <View style={{width: "100%"}}>
-                <AuthSubmitButton handleSubmit={handleSubmit} marginTOP={38} confirm={true} loading={false} title={"Continue"} buttonColor="#FA4E61" loadColor="black" textColor={"white"} />
+                <AuthSubmitButton handleSubmit={handleSubmit} marginTOP={38} confirm={true} loading={isSubmitting?.verifyPhone} title={"Continue"} buttonColor="#FA4E61" loadColor="black" textColor={"white"} />
                     </View>
+                    </View>
+        )}
+      </Formik>
                     </ScrollView>
         </SafeAreaView>
     )
