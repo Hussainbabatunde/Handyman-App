@@ -18,6 +18,8 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import AppContext from '../../context'
 
 const Dashboard = () => {
+  const { dispatch, logoutUser, removeUserData, userData, jobTypes } =
+    React.useContext<any>(AppContext);
   const navigation = useNavigation<StackNavigationProp<any>>();
     const activity = [
         {
@@ -33,7 +35,7 @@ const Dashboard = () => {
             img: cleaning
         },
         {
-            title: "Plumbing",
+            title: "Plumber",
             img: plumbing
         },
         {
@@ -53,8 +55,15 @@ const Dashboard = () => {
             img: more
         }
     ]
-    const { dispatch, logoutUser, removeUserData, userData } =
-    React.useContext<any>(AppContext);
+    const filteredJobTypes = jobTypes.map((c: any) => {
+    const match = activity.find(countryApp => countryApp.title == c.name);
+  
+    return {
+      ...c,
+      img: match?.img || null,
+    };
+  });
+    
 
     const logoutOnSubmit = React.useCallback(async () => {
     await logoutUser(dispatch);
@@ -88,10 +97,11 @@ const Dashboard = () => {
     marginTop: 20,
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between", // spaces them evenly
+    justifyContent: "flex-start", // spaces them evenly
+    gap: 6
   }}
 >
-  {activity.map((each, index) => (
+  {filteredJobTypes.map((each: any, index: number) => (
     <Pressable
       key={index}
       style={{
@@ -113,7 +123,7 @@ const Dashboard = () => {
     >
       <Image source={each?.img} style={{ width: 30, height: 30 }} />
       <TextMedium style={{ fontSize: 9, color: "black", textAlign: "center", marginTop: 2 }}>
-        {each?.title}
+        {each?.name}
       </TextMedium>
     </Pressable>
   ))}

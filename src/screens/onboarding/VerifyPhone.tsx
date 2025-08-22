@@ -8,6 +8,7 @@ import { TextBold, TextRegular } from "../../component/StyledText";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { OnboardContext } from ".";
+import AppContext from "../../context";
 
 // ✅ Yup validation schema
 const validationSchema = Yup.object().shape({
@@ -20,6 +21,8 @@ const validationSchema = Yup.object().shape({
 
 export default function VerifyPhone () {
     const navigation = useNavigation<StackNavigationProp<any>>();
+        const {jobTypes} = useContext(AppContext)
+        
     
   const { verifyPhoneApiCall, isSubmitting } = useContext(OnboardContext);
 

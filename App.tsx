@@ -53,6 +53,7 @@ import { navigationRef } from "./src/navigation/RootNavigation";
 // import TabNavigation from "./src/navigation/TabNavigation";
 import OnboardStackScreen from "./src/screens/onboarding";
 import TabNavigation from "./src/navigation/TabNavigation";
+import { getJobTypesApi } from "./src/services";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -67,6 +68,7 @@ function App(): React.JSX.Element {
   const [state, dispatch] = React.useReducer(AppReducer, initialState);
   const [appStateSubscription, setAppStateSubscription] =
     useState<NativeEventSubscription | null>(null);
+    const [jobTypes, setJobTypes] = useState([])
 
   let token: any;
 
@@ -83,7 +85,12 @@ function App(): React.JSX.Element {
           "Font-Medium": require("./assets/fonts/IBMPlexSans-Medium.ttf"),
           "Font-SemiBold": require("./assets/fonts/IBMPlexSans-SemiBold.ttf"),
           "Font-Bold": require("./assets/fonts/IBMPlexSans-Bold.ttf"),
-        });
+        })
+        await getJobTypesApi().then((res) => {
+          // console.log("job types: ", res?.data);
+            setJobTypes(res?.data)
+            
+          }).catch(console.log),
 
         //pre load images
         // const images = [
@@ -281,6 +288,7 @@ function App(): React.JSX.Element {
           setGlobalActive,
           phoneToken,
           setPhoneToken,
+          jobTypes
         }}
       >
         <NavigationContainer ref={navigationRef}>

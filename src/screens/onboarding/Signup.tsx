@@ -2,19 +2,35 @@ import { Entypo, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icon
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useEffect, useState } from "react"
-import { Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
+import { FlatList, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import { TextBold, TextRegular } from "../../component/StyledText";
 import { OnboardContext } from ".";
+import AppContext from "../../context";
+
+// const jobTypes = [
+//   "Frontend Developer",
+//   "Backend Developer",
+//   "UI/UX Designer",
+//   "Mobile Developer",
+//   "DevOps Engineer",
+//   "Project Manager",
+//   "QA Tester",
+// ];
+
 
 export default function Signup() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const [errors, setErrors] = useState<any>({}); // Store error messages
     const { valueSetupProfile, setValueSetupProfile, phoneNumber } =
         useContext(OnboardContext);
+        const {jobTypes} = useContext(AppContext)
     const [confirm, setConfirm] = useState(false);
     const [focusedInput, setFocusedInput] = useState<any>(null); // Track focused input
     const [checked, setChecked] = useState(false)
+  const [query, setQuery] = useState("");
+  const [selected, setSelected] = useState<string[]>([]);
+  const [isOpen, setIsOpen] = useState(false);
 
     const validateInputs = () => {
         let newErrors: { [key: string]: string } = {};
@@ -77,11 +93,36 @@ export default function Signup() {
         if (validateInputs()) {
         //     setConfirm(true);
         //     //   navigation.navigate("ProfileSetupStep2");
+        setValueSetupProfile((prevState: any) => ({
+            ...prevState,
+            "userJobType": selected,
+        }));
             navigation.navigate("OnboardStackScreen", {
           screen: "Password",
         });
         }
     }
+
+    // filter list based on query
+  const filteredJobTypes = query.trim() === ""
+  ? jobTypes
+  : jobTypes.filter((item: any) =>
+      item?.name?.toLowerCase().includes(query.toLowerCase())
+    );
+
+  const toggleSelect = (name: string) => {
+    if (selected.includes(name)) {
+      setSelected(selected.filter((s) => s !== name)); // remove
+    } else {
+      setSelected([...selected, name]); // add
+    }
+    setQuery("");
+    setIsOpen(false);
+  };
+
+  const removeTag = (name: string) => {
+    setSelected(selected.filter((s) => s !== name));
+  };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -135,6 +176,51 @@ export default function Signup() {
                         {checked? <MaterialIcons name="check-box" size={22} color="#FA4E61" /> : <MaterialCommunityIcons name="checkbox-blank-outline" size={22} color="#ABABAB" />}
                         <TextRegular style={styles.checkboxText}>Are you an <TextBold>artisan</TextBold>?</TextRegular>
                     </Pressable>
+
+{checked && <View style={{flex: 1}}>
+                    {/* Selected tags + input */}
+                    <Text style={styles.labelText}>Select Job type:</Text>
+      <View style={styles.inputContainer}>
+        {selected.map((name) => (
+          <View key={name} style={styles.tag}>
+            <Text style={styles.tagText}>{name}</Text>
+            <TouchableOpacity onPress={() => removeTag(name)}>
+              <Text style={styles.removeText}>×</Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+        <TextInput
+          style={styles.textInput}
+          placeholder="Search job type..."
+          value={query}
+  onFocus={() => {
+    setIsOpen(true)
+  }}
+  onBlur={() => setIsOpen(false)}
+          onChangeText={(text) => {
+            setQuery(text);
+            setIsOpen(true);
+          }}
+        />
+      </View>
+
+      {/* Dropdown list */}
+      {isOpen && filteredJobTypes.length > 0 && (
+        <FlatList
+          data={filteredJobTypes}
+          keyExtractor={(item) => item?.id}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={styles.dropdownItem}
+              onPress={() => toggleSelect(item?.key)}
+            >
+              <Text style={styles.dropdownText}>{item?.name}</Text>
+            </TouchableOpacity>
+          )}
+          style={styles.dropdown}
+        />
+      )}
+      </View>}
                 </View>
                 <View style={{ width: "100%" }}>
                     <AuthSubmitButton handleSubmit={handleSubmit} marginTOP={38} confirm={true} loading={false} title={"Submit"} buttonColor="#FA4E61" loadColor="black" textColor={"white"} />
@@ -199,4 +285,54 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginTop: 5,
     },
+    inputContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#DADADA",
+    backgroundColor: "#FBFBFB",
+    borderRadius: 5,
+    paddingHorizontal: 18,
+    paddingVertical: 6,
+  },
+  textInput: {
+    flex: 1,
+    minWidth: 120,
+    padding: 8,
+  },
+  tag: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#dbeafe",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 16,
+    marginRight: 6,
+    marginBottom: 6,
+  },
+  tagText: {
+    color: "#1e3a8a",
+    marginRight: 4,
+  },
+  removeText: {
+    color: "red",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  dropdown: {
+    maxHeight: 200,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 8,
+    marginTop: 6,
+  },
+  dropdownItem: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#eee",
+  },
+  dropdownText: {
+    fontSize: 16,
+  },
 })

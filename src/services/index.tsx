@@ -47,3 +47,8 @@ export const loginPhoneApi = async (values: object) => {
   const { data } = await axios.post(`auth/login`, values);
   return data;
 }
+
+export const getJobTypesApi = async () => {
+  const { data } = await axios.get(`job-type/all`);
+  return data;
+}
