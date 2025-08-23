@@ -21,7 +21,7 @@ const validationSchema = Yup.object().shape({
 
 export default function VerifyPhone () {
     const navigation = useNavigation<StackNavigationProp<any>>();
-        const {jobTypes} = useContext(AppContext)
+        const {jobTypes} = useContext<any>(AppContext)
         
     
   const { verifyPhoneApiCall, isSubmitting } = useContext(OnboardContext);

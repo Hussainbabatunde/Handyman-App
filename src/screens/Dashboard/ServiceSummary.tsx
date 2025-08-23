@@ -11,7 +11,13 @@ export default function ServiceSummary () {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const handleSubmit = () => {
-        navigation.navigate('PinCode')
+        // navigation.navigate('PinCode')
+        navigation.navigate("TabNavigation", {
+      screen: "DashboardNavigation",
+      params: {
+        screen: "BookArtisan",
+      },
+    })
     }
 
     return(
@@ -34,7 +40,9 @@ export default function ServiceSummary () {
                         House Cleaning
                     </Text>
                     <View style={{flex: 1}}>
+                        <ScrollView bounces={false}>
                     <TextRegular style={styles.descText}>{splitIntoParagraphs('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque diam, fermentum a hendrerit a, sollicitudin ut ex. Vivamus fermentum, dolor nec ultrices blandit, ligula tellus semper lectus, et facilisis nunc lectus a arcu. Nam in efficitur nulla. Fusce hendrerit nisi a metus malesuada faucibus. Fusce tristique blandit ligula, a gravida lorem porta nec. Morbi leo justo, efficitur sit amet justo et, elementum consectetur elit. Curabitur aliquam turpis sed lorem porttitor, sit amet mattis est gravida. Nam id eleifend nulla, eget rhoncus odio. In hac habitasse platea dictumst. Pellentesque maximus ultricies sem vel pretium. Sed a viverra ligula. Suspendisse fringilla dolor eu lorem euismod, eget pharetra mauris tempus. Sed convallis velit odio, vel dictum augue porta a. Quisque vulputate tempor mattis.')}</TextRegular>
+                    </ScrollView>
                     </View>
                     <View style={{width: "100%"}}>
                 <AuthSubmitButton handleSubmit={handleSubmit} marginTOP={38} confirm={true} loading={false} title={"Book Now"} buttonColor="#FA4E61" loadColor="black" textColor={"white"} />

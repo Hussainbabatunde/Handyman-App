@@ -92,7 +92,6 @@ const ConfirmPassword = () => {
 
   const handleSubmit = async () => {
     let passwordString = code.join('');
-    console.log("values profile: ", valueSetupProfile);
     await registerApiCall()
   };
 

@@ -14,6 +14,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppContext from '../../../src/context';
 import Dashboard from './Dashboard';
 import ServiceSummary from './ServiceSummary';
+import BookArtisan from './BookArtisan';
+import SelectArtisan from './SelectArtisan';
+import BookingSuccess from './BookingSuccess';
+import BookingDetails from './BookingDetails';
 
 const Stack = createStackNavigator();
 
@@ -60,6 +64,26 @@ const DashboardNavigation = ({navigation, route}: any) => {
         <Stack.Screen
           name="ServiceSummary"
           component={ServiceSummary}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="BookArtisan"
+          component={BookArtisan}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="SelectArtisan"
+          component={SelectArtisan}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen
+          name="BookingSuccess"
+          component={BookingSuccess}
+          options={{headerShown: false, gestureEnabled: false}}
+        />
+        <Stack.Screen
+          name="BookingDetails"
+          component={BookingDetails}
           options={{headerShown: false, gestureEnabled: false}}
         />
       </Stack.Navigator>
