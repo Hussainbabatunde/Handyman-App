@@ -22,6 +22,7 @@ import { useState } from "react";
 import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { TextMedium, TextSemiBold } from "../component/StyledText";
 import DashboardNavigation from "../screens/Dashboard/DashboardStack";
+import BookingsNavigation from "../screens/Bookings/BookingsStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -32,7 +33,7 @@ const getActiveRouteName = (route: any) => {
   
   // Map tab navigator names to their default/main screen names
   const routeMapping: any = {
-    'ProfileNavigation': 'Profile',
+    'BookingsNavigation': 'Bookings',
     'ExchangeNavigation': 'Exchange', 
     'TransactionNavigation': 'Transaction',
     'DashboardNavigation': 'Dashboard'
@@ -76,44 +77,9 @@ function TabNavigation() {
             StatusBar.setTranslucent(true);
             StatusBar.setBarStyle("dark-content", true);
           }
-          if(routeName === "Profile"){
-            StatusBar.setBackgroundColor("transparent", true);
-            StatusBar.setTranslucent(true);
-            StatusBar.setBarStyle("light-content"); // Or "light-content" based on design
-          }
-          if(routeName === "FundWallet"){
-            StatusBar.setBackgroundColor("#fff", true);
-            StatusBar.setTranslucent(true);
-            StatusBar.setBarStyle("dark-content", true);
-          }
-          if(routeName === "ProfileDetail"){
-            StatusBar.setBackgroundColor("#fff", true);
-            StatusBar.setTranslucent(true);
-            StatusBar.setBarStyle("dark-content", true);
-          }
-          if(routeName === "NewPassword"){
-            StatusBar.setBackgroundColor("#fff", true);
-            StatusBar.setTranslucent(false);
-            StatusBar.setBarStyle("dark-content", true);
-          }
-          if(routeName === "WebViewDisplay"){
-            StatusBar.setBackgroundColor("#fff", true);
-            StatusBar.setTranslucent(true);
-            StatusBar.setBarStyle("dark-content", true);
-          }
-          if(routeName === "Transactionpin"){
-            StatusBar.setBackgroundColor("#fff", true);
-            StatusBar.setTranslucent(true);
-            StatusBar.setBarStyle("dark-content", true);
-          }
-          if(routeName === 'Support'){
-            StatusBar.setBackgroundColor("#B8FE60", true);
-            StatusBar.setTranslucent(true);
-            StatusBar.setBarStyle("dark-content", true);
-          }
           
           // Define which routes should show the tab bar
-          const tabBarVisibleRoutes = ['Dashboard', 'Profile', 'Exchange', 'Transaction'];
+          const tabBarVisibleRoutes = ['Dashboard', 'Bookings', 'Exchange', 'Transaction'];
           
           // Hide tab bar for specific routes
           if (!tabBarVisibleRoutes.includes(routeName)) {
@@ -147,7 +113,7 @@ function TabNavigation() {
                       : require("../../assets/images/inactiveHome.png");
                     textLabel = "Home";
                     break;
-                  case "ExchangeNavigation":
+                  case "BookingsNavigation":
                     iconSource = isFocused
                       ? require("../../assets/images/activeBookings.png")
                       : require("../../assets/images/inactiveBookings.png");
@@ -219,6 +185,32 @@ function TabNavigation() {
                 style={{ color: focused ? "#E13548" : "#646568", fontSize: 12, paddingBottom: 10 }}
               >
                 Home
+              </TextMedium>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="BookingsNavigation"
+          component={BookingsNavigation}
+          options={{
+            title: "Bookings",
+            headerShown: false,
+            tabBarActiveTintColor: "#33BA76",
+            tabBarIcon: ({ color, focused }) => (
+              <Image
+                source={
+                  focused
+                      ? require("../../assets/images/activeHome.png")
+                      : require("../../assets/images/inactiveHome.png")
+                }
+                style={{ width: 24, height: 24, resizeMode: "contain" }}
+              />
+            ),
+            tabBarLabel: ({ focused, color }) => (
+              <TextMedium
+                style={{ color: focused ? "#E13548" : "#646568", fontSize: 12, paddingBottom: 10 }}
+              >
+                Bookings
               </TextMedium>
             ),
           }}
