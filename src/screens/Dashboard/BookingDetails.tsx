@@ -20,12 +20,12 @@ export default function BookingDetails() {
     const {createBookingRes} = useContext<any>(DashboardContext)
     const handleSubmit = () => {
         // navigation.navigate('PinCode')
-        navigation.navigate("TabNavigation", {
-            screen: "DashboardNavigation",
-            params: {
-                screen: "BookingSuccess",
-            },
-        })
+        // navigation.navigate("TabNavigation", {
+        //     screen: "DashboardNavigation",
+        //     params: {
+        //         screen: "BookingSuccess",
+        //     },
+        // })
     }
 
 

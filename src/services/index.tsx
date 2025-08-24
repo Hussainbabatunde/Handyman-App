@@ -70,3 +70,30 @@ export const createBookingApi = async (token: string | null, values: object) => 
   });
   return data;
 }
+
+export const getAllBookingsApi = async (token: string | null) => {
+  const { data } = await axios.get(`bookings/client/all`, {
+    headers: {
+      "Authorization":"Bearer " + token
+    }
+  });
+  return data;
+}
+
+export const completeBookingApi = async (token: string | null, id: string, values: object) => {
+  const { data } = await axios.post(`bookings/complete/${id}`, values, {
+    headers: {
+      "Authorization":"Bearer " + token
+    }
+  });
+  return data;
+}
+
+export const getBookingDetailsApi = async (token: string | null, id: string) => {
+  const { data } = await axios.get(`bookings/details/${id}`, {
+    headers: {
+      "Authorization":"Bearer " + token
+    }
+  });
+  return data;
+}

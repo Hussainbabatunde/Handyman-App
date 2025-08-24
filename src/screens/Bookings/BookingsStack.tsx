@@ -13,6 +13,10 @@ import React, {createContext, useContext, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppContext from '../../../src/context';
 import Bookings from './Bookings';
+import { completeBookingApi, getAllBookingsApi, getBookingDetailsApi } from '../../services';
+import { Booking } from '../../services/ApiTypes';
+import BookingDetailsPage from './BookingDetailsPage';
+import { commonActions } from '../../context/actions';
 
 const Stack = createStackNavigator();
 
@@ -22,12 +26,13 @@ const BookingsNavigation = ({navigation, route}: any) => {
   const [currentRoute, setCurrentRoute] = useState<string | null>(null);
   const { identifier, dispatch, errorResponse, userData, firstLogin, logOutUser, setApplicationId, setEnvironment } = useContext<any>(AppContext);
   const [isSubmitting, setIsSubmitting] = useState({
-    userProfile: false,
-    kycAccess: false,
-    fundWallet: false,
-    confirmFundWallet: false,
-    createTransactionPin: false
+    allBookings: false,
+    completeBooking: false,
+    bookingDetails: false
   })
+  const [allBookingRes, setAllBookingRes] = useState<Booking | null>(null)
+  const [completeBookingRes, setCompleteBookingRes] = useState<any>(null)
+  const [bookingDetailsRes, setBookingDetailsRes] = useState<any>(null)
 
   React.useLayoutEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route);
@@ -38,13 +43,83 @@ const BookingsNavigation = ({navigation, route}: any) => {
     });
   }, [navigation, route]);
 
+const getAllBookingsApiCall = async (key: string) => {
+      Keyboard.dismiss();
+      
+      setIsSubmitting((prev) => ({...prev, allBookings: true}));
+      
+    let userToken = await AsyncStorage.getItem("userToken");
+      await getAllBookingsApi(userToken)
+        .then((response) => response)
+        .then(async (data) => {
+        //   console.log("all artisan by profession: ", data);
+          setAllBookingRes(data)
+      setIsSubmitting((prev) => ({...prev, allBookings: false}));
+        })
+        .catch((error) => {
+      setIsSubmitting((prev) => ({...prev, allBookings: false}));
+          console.log(error?.response, "error_____");
+          errorResponse({ error, dispatch });
+        })
+        .then(() => 
+      setIsSubmitting((prev) => ({...prev, allBookings: false})));
+    };
 
+    const completeBookingApiCall = async (id: string, values: object) => {
+      Keyboard.dismiss();
+      
+      setIsSubmitting((prev) => ({...prev, completeBooking: true}));
+      
+    let userToken = await AsyncStorage.getItem("userToken");
+      await completeBookingApi(userToken, id, values)
+        .then((response) => response)
+        .then(async (data) => {
+          setCompleteBookingRes(data)
+                    commonActions.notify('success', 'Booking completed', "Booking completed successfully.");
+      setIsSubmitting((prev) => ({...prev, completeBooking: false}));
+        })
+        .catch((error) => {
+      setIsSubmitting((prev) => ({...prev, completeBooking: false}));
+          console.log(error?.response, "error_____");
+          errorResponse({ error, dispatch });
+        })
+        .then(() => 
+      setIsSubmitting((prev) => ({...prev, completeBooking: false})));
+    };
+
+    const getBookingDetailsApiCall = async (id: string) => {
+      Keyboard.dismiss();
+      
+      setIsSubmitting((prev) => ({...prev, bookingDetails: true}));
+      
+    let userToken = await AsyncStorage.getItem("userToken");
+      await getBookingDetailsApi(userToken, id)
+        .then((response) => response)
+        .then(async (data) => {
+          setBookingDetailsRes(data?.data)
+      setIsSubmitting((prev) => ({...prev, bookingDetails: false}));
+        })
+        .catch((error) => {
+      setIsSubmitting((prev) => ({...prev, bookingDetails: false}));
+          console.log(error?.response, "error_____");
+          errorResponse({ error, dispatch });
+        })
+        .then(() => 
+      setIsSubmitting((prev) => ({...prev, bookingDetails: false})));
+    };
 
 
   return (
     <BookingsContext.Provider
       value={{
-
+        isSubmitting,
+        getAllBookingsApiCall,
+        allBookingRes,
+        completeBookingRes,
+        completeBookingApiCall,
+        setCompleteBookingRes,
+        bookingDetailsRes,
+        getBookingDetailsApiCall
       }}>
       <Stack.Navigator screenOptions={{
     headerShown: false,
@@ -54,6 +129,11 @@ const BookingsNavigation = ({navigation, route}: any) => {
         <Stack.Screen
           name="Bookings"
           component={Bookings}
+          options={{headerShown: false, gestureEnabled: false}}
+        />
+        <Stack.Screen
+          name="BookingDetailsPage"
+          component={BookingDetailsPage}
           options={{headerShown: false, gestureEnabled: false}}
         />
       </Stack.Navigator>

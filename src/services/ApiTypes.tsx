@@ -93,3 +93,27 @@ export interface BookingResponse {
     };
   };
 }
+
+
+export interface UserInfo {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export interface Booking {
+  id: number;
+  scheduledAt: string;   // ISO string from DB
+  location: string;
+  notes: string;
+  requestedBy: number;
+  assignedArtisan: number;
+  jobTypeKey: number;
+  artisanStatus: "pending" | "accepted" | "rejected" | string; // extend as needed
+  status: "pending" | "confirmed" | "completed" | "cancelled" | string; // extend as needed
+  createdAt: string;
+  updatedAt: string;
+  requester: UserInfo;
+  artisan: UserInfo;
+}
