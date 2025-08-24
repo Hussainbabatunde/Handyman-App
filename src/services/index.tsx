@@ -52,3 +52,21 @@ export const getJobTypesApi = async () => {
   const { data } = await axios.get(`job-type/all`);
   return data;
 }
+
+export const getArtisanByProfessionApi = async (token: string | null, id: string) => {
+  const { data } = await axios.get(`auth/artisans/${id}`, {
+    headers: {
+      "Authorization":"Bearer " + token
+    }
+  });
+  return data;
+}
+
+export const createBookingApi = async (token: string | null, values: object) => {
+  const { data } = await axios.post(`bookings/create`, values, {
+    headers: {
+      "Authorization":"Bearer " + token
+    }
+  });
+  return data;
+}

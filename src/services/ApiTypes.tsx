@@ -62,3 +62,34 @@ export interface UserData {
   updatedAt: string; // ISO date string
   createdAt: string; // ISO date string
 }
+
+export interface ArtisanByProfessionType {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  userType: number; // if you have predefined roles, this could be an enum instead
+  userJobType: string[];
+  createdAt: string; // ISO string (Date in string form)
+  updatedAt: string;
+}
+
+export interface BookingResponse {
+  message: string;
+  data: {
+    booking: {
+      id: number;
+      scheduledAt: string;  // ISO date string
+      location: string;
+      notes: string;
+      requestedBy: number;
+      assignedArtisan: number;
+      jobTypeKey: number;
+      artisanStatus: "pending" | "accepted" | "rejected" | string; // adjust if more statuses
+      status: "pending" | "completed" | "in progress" | string;      // adjust if more statuses
+      updatedAt: string;  // ISO date string
+      createdAt: string;  // ISO date string
+    };
+  };
+}

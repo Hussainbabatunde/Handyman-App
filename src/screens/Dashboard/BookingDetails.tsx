@@ -1,7 +1,7 @@
 import { AntDesign, Entypo, Feather, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import { Image, KeyboardAvoidingView, Modal, Platform, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import { splitIntoParagraphs } from "../../services/utils";
@@ -11,11 +11,13 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import moment from "moment";
 import userProfilePic from "../../../assets/images/userProfilePic.png"
+import { DashboardContext } from "./DashboardStack";
+import { capitalize } from "../../context/actions/utils";
 
 export default function BookingDetails() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
-
+    const {createBookingRes} = useContext<any>(DashboardContext)
     const handleSubmit = () => {
         // navigation.navigate('PinCode')
         navigation.navigate("TabNavigation", {
@@ -49,34 +51,34 @@ export default function BookingDetails() {
                     <Text
                         style={[styles.nameIdentifier, { marginTop: 25, fontWeight: 600 }]}
                     >
-                        House Cleaning
+                        {createBookingRes?.data?.booking?.jobType?.name}
                     </Text>
-                    <TextRegular style={{ color: "#696969", fontSize: 16, marginTop: 10, marginBottom: 8 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque diam, fermentum a hendrerit a, sollicitudin ut ex. </TextRegular>
-                    <TextRegular style={{color: "#9999A3", fontSize: 14}}>Created on <TextMedium style={{fontSize: 14, color: "black"}}>16th Aug, 2023</TextMedium></TextRegular>
+                    <TextRegular style={{ color: "#696969", fontSize: 16, marginTop: 10, marginBottom: 8 }}>{createBookingRes?.data?.booking?.notes} </TextRegular>
+                    <TextRegular style={{color: "#9999A3", fontSize: 14}}>Created on <TextMedium style={{fontSize: 14, color: "black"}}>{moment(createBookingRes?.data?.booking?.createdAt).format("Do MMM, YYYY")}</TextMedium></TextRegular>
                     <View style={{alignItems: "flex-start"}}>
                         <View style={{backgroundColor: "#FF9B5E", borderRadius: 4, paddingHorizontal: 9, paddingVertical: 4, marginTop: 9}}>
-                            <TextRegular style={{color: "white", fontSize: 11}}>Task Accepted</TextRegular>
+                            <TextRegular style={{color: "white", fontSize: 11}}>Task {capitalize(createBookingRes?.data?.booking?.status)}</TextRegular>
                         </View>
                     </View>
                     <View style={styles.locationView}>
                         <Entypo name="location-pin" size={24} color="#979797" />
                         <View style={styles.detailsLocationView}>
-                            <TextSemiBold style={styles.mainText}>20 Babatunde close, Lekki Phase 1</TextSemiBold>
+                            <TextSemiBold style={styles.mainText}>{createBookingRes?.data?.booking?.location}</TextSemiBold>
                             <TextRegular style={styles.subText}>Lagos, Nigeria</TextRegular>
                         </View>
                     </View>
                     <View style={[styles.locationView, {marginTop: 0, borderTopWidth: 0}]}>
                         <Entypo name="location-pin" size={24} color="#979797" />
                         <View style={styles.detailsLocationView}>
-                            <TextSemiBold style={styles.mainText}>Saturday, July 18th, 2025</TextSemiBold>
-                            <TextRegular style={styles.subText}>start from <TextMedium style={{color: "black", fontSize: 16}}>8:00am</TextMedium></TextRegular>
+                            <TextSemiBold style={styles.mainText}>{moment(createBookingRes?.data?.booking?.scheduledAt).format("dddd, MMMM Do, YYYY")}</TextSemiBold>
+                            <TextRegular style={styles.subText}>start from <TextMedium style={{color: "black", fontSize: 16}}>{moment(createBookingRes?.data?.booking?.scheduledAt).format('hh:mm A')}</TextMedium></TextRegular>
                         </View>
                     </View>
                     <Pressable onPress={handleSubmit} style={styles.artisanView}>
                             <Image source={userProfilePic} style={{width: 60, height: 60}} />
                             <View style={{marginLeft: 12}}>
-                                <TextSemiBold style={styles.nameTag}>Johnson Chijoke</TextSemiBold>
-                                <TextRegular style={styles.smallerText}>Joined May, 2025</TextRegular>
+                                <TextSemiBold style={styles.nameTag}>{capitalize(createBookingRes?.data?.booking?.artisan?.firstName)} {capitalize(createBookingRes?.data?.booking?.artisan?.lastName)}</TextSemiBold>
+                                <TextRegular style={styles.smallerText}>Joined {moment(createBookingRes?.data?.booking?.artisan?.createdAt).format("MMMM, YYYY")}</TextRegular>
                                 <View style={{flexDirection: "row", marginTop: 4}}>
                                     <AntDesign name="star" size={14} color="#FFC61C" />
                                     <AntDesign name="star" size={14} color="#FFFFFF99" />

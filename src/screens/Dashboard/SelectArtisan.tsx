@@ -1,7 +1,7 @@
 import { AntDesign, Entypo, Feather, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 import { Image, KeyboardAvoidingView, Modal, Platform, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import { splitIntoParagraphs } from "../../services/utils";
@@ -11,19 +11,28 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import moment from "moment";
 import userProfilePic from "../../../assets/images/userProfilePic.png"
+import { FlatList } from "react-native-gesture-handler";
+import { DashboardContext } from "./DashboardStack";
+import { capitalize } from "../../context/actions/utils";
+import ModalLoading from "../../component/modals/ModalLoading";
 
 export default function SelectArtisan() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
+            const {isSubmitting, getArtisanByProfessionApiCall, allArtisanByProfession, createBookingApiCall} = useContext<any>(DashboardContext)
+            // console.log("all artisans profession: ", allArtisanByProfession);
+            
 
-    const handleSubmit = () => {
+
+    const handleSubmit = async (item: any) => {
         // navigation.navigate('PinCode')
-        navigation.navigate("TabNavigation", {
-      screen: "DashboardNavigation",
-      params: {
-        screen: "BookingSuccess",
-      },
-    })
+        await createBookingApiCall(item?.id, allArtisanByProfession?.jobType?.id)
+    //     navigation.navigate("TabNavigation", {
+    //   screen: "DashboardNavigation",
+    //   params: {
+    //     screen: "BookingSuccess",
+    //   },
+    // })
     }
 
 
@@ -53,21 +62,29 @@ export default function SelectArtisan() {
                 </Text>
                                         <TextRegular style={{ color: "#696969", fontSize: 16, marginTop: 10, marginBottom: 4 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit</TextRegular>
                 <View style={{ flex: 1 }}>
-                    <ScrollView bounces={false}>
-                        <Pressable onPress={handleSubmit} style={styles.artisanView}>
-                            <Image source={userProfilePic} style={{width: 60, height: 60}} />
-                            <View style={{marginLeft: 12}}>
-                                <TextSemiBold style={styles.nameTag}>Johnson Chijoke</TextSemiBold>
-                                <TextRegular style={styles.smallerText}>Joined May, 2025</TextRegular>
-                                <View style={{flexDirection: "row", marginTop: 4}}>
-                                    <AntDesign name="star" size={14} color="#FFC61C" />
-                                    <AntDesign name="star" size={14} color="#FFFFFF99" />
-                                </View>
-                            </View>
-                        </Pressable>
-                    </ScrollView>
+                    <FlatList
+      data={allArtisanByProfession?.data}
+      keyExtractor={(item) => item.id}
+      contentContainerStyle={{ paddingVertical: 10 }}
+      renderItem={({ item }) => (
+        <Pressable onPress={() => handleSubmit(item)} style={styles.artisanView}>
+          <Image source={userProfilePic} style={{ width: 60, height: 60 }} />
+          <View style={{ marginLeft: 12 }}>
+            <TextSemiBold style={styles.nameTag}>{capitalize(item?.firstName)} {capitalize(item?.lastName)}</TextSemiBold>
+            <TextRegular style={styles.smallerText}>
+              Joined {moment(item?.createdAt).format("MMMM, YYYY")}
+            </TextRegular>
+            <View style={{ flexDirection: "row", marginTop: 4 }}>
+              <AntDesign name="star" size={14} color="#FFC61C" />
+              <AntDesign name="star" size={14} color="#FFFFFF99" />
+            </View>
+          </View>
+        </Pressable>
+      )}
+    />
                 </View>
             </View>
+                    <ModalLoading verify={isSubmitting?.createBooking} />
             </KeyboardAvoidingView>
         </SafeAreaView>
     )

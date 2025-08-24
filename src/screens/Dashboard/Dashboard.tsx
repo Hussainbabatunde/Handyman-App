@@ -1,5 +1,5 @@
 import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React, { useContext } from 'react'
 import Avatar from "../../../assets/images/avatar.png"
 import { TextMedium, TextRegular, TextSemiBold } from '../../component/StyledText'
 import { Feather, Octicons } from '@expo/vector-icons'
@@ -16,10 +16,12 @@ import more from "../../../assets/images/more.png"
 import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import AppContext from '../../context'
+import { DashboardContext } from './DashboardStack'
 
 const Dashboard = () => {
   const { dispatch, logoutUser, removeUserData, userData, jobTypes } =
     React.useContext<any>(AppContext);
+    const {isSubmitting, getArtisanByProfessionApiCall, allArtisanByProfession} = useContext<any>(DashboardContext)
   const navigation = useNavigation<StackNavigationProp<any>>();
     const activity = [
         {
@@ -114,12 +116,18 @@ const Dashboard = () => {
         alignItems: "center",
         marginBottom: 16, // spacing between rows
       }}
-       onPress={() => navigation.navigate("TabNavigation", {
+       onPress={async () => {
+        // await getArtisanByProfessionApiCall(each?.key)
+        navigation.navigate("TabNavigation", {
       screen: "DashboardNavigation",
       params: {
         screen: "ServiceSummary",
+        params: {
+          key: each?.key
+        }
       },
-    })}
+    })
+       }}
     >
       <Image source={each?.img} style={{ width: 30, height: 30 }} />
       <TextMedium style={{ fontSize: 9, color: "black", textAlign: "center", marginTop: 2 }}>

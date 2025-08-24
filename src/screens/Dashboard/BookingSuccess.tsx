@@ -9,11 +9,17 @@ import { StackNavigationProp } from "@react-navigation/stack";
 import AppContext from "../../context";
 import { AntDesign } from "@expo/vector-icons";
 import userProfilePic from "../../../assets/images/userProfilePic.png"
+import { DashboardContext } from "./DashboardStack";
+import moment from "moment";
+import { capitalize } from "../../context/actions/utils";
 
 export default function BookingSuccess() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const { countries, dispatch, userData, setUserData, setLogOutUser } = useContext<any>(AppContext);
 
+            const {createBookingRes} = useContext<any>(DashboardContext)
+            // console.log("createBookingRes: ", createBookingRes);
+            
 
     return (
         <ScrollView showsVerticalScrollIndicator={false} style={[styles.container, { backgroundColor: "white" }]}>
@@ -27,26 +33,26 @@ export default function BookingSuccess() {
                     <View style={styles.detailsView}>
                         <View style={styles.detailsInfoView}>
                             <TextRegular style={styles.infoTitle}>Booking ID</TextRegular>
-                            <TextMedium style={[styles.infoTitle, {color: "black"}]}>BK-EDJHYIK-875</TextMedium>
+                            <TextMedium style={[styles.infoTitle, {color: "black"}]}>{createBookingRes?.data?.booking?.id}</TextMedium>
                         </View>
                         <View style={styles.detailsInfoView}>
                             <TextRegular style={styles.infoTitle}>Service</TextRegular>
-                            <TextMedium style={[styles.infoTitle, {color: "black"}]}>House Cleaning</TextMedium>
+                            <TextMedium style={[styles.infoTitle, {color: "black"}]}>{createBookingRes?.data?.booking?.jobType?.name}</TextMedium>
                         </View>
                         <View style={styles.detailsInfoView}>
                             <TextRegular style={styles.infoTitle}>Working Day</TextRegular>
-                            <TextMedium style={[styles.infoTitle, {color: "black"}]}>Monday, 16th 2025</TextMedium>
+                            <TextMedium style={[styles.infoTitle, {color: "black"}]}>{moment(createBookingRes?.data?.booking?.scheduledAt).format("dddd, Do YYYY")}</TextMedium>
                         </View>
                         <View style={styles.detailsInfoView}>
                             <TextRegular style={styles.infoTitle}>Start Time</TextRegular>
-                            <TextMedium style={[styles.infoTitle, {color: "black"}]}>11:30 AM</TextMedium>
+                            <TextMedium style={[styles.infoTitle, {color: "black"}]}>{moment(createBookingRes?.data?.booking?.scheduledAt).format('hh:mm A')}</TextMedium>
                         </View>
                     </View>
                     <Pressable style={styles.artisanView}>
                             <Image source={userProfilePic} style={{width: 60, height: 60}} />
                             <View style={{marginLeft: 12}}>
-                                <TextSemiBold style={styles.nameTag}>Johnson Chijoke</TextSemiBold>
-                                <TextRegular style={styles.smallerText}>Joined May, 2025</TextRegular>
+                                <TextSemiBold style={styles.nameTag}>{capitalize(createBookingRes?.data?.booking?.artisan?.firstName)} {capitalize(createBookingRes?.data?.booking?.artisan?.lastName)}</TextSemiBold>
+                                <TextRegular style={styles.smallerText}>Joined {moment(createBookingRes?.data?.booking?.artisan?.createdAt).format("MMMM, YYYY")}</TextRegular>
                                 <View style={{flexDirection: "row", marginTop: 4}}>
                                     <AntDesign name="star" size={14} color="#FFC61C" />
                                     <AntDesign name="star" size={14} color="#FFFFFF99" />
@@ -67,12 +73,12 @@ export default function BookingSuccess() {
                                                 <TextMedium style={{color: "white", fontSize: 15, }}>See details</TextMedium>
                                             </Pressable>
                                             <Pressable onPress={async () =>{
-                                //                  navigation.navigate("TabNavigation", {
-                                //   screen: "DashboardNavigation",
-                                //   params: {
-                                //     screen: "Dashboard",
-                                //   },
-                                // })
+                                                 navigation.navigate("TabNavigation", {
+                                  screen: "BookingsNavigation",
+                                  params: {
+                                    screen: "Bookings",
+                                  },
+                                })
                                 }} style={{ paddingHorizontal: 60, paddingVertical: 13, borderRadius: 25, marginTop: 5}}>
                                                 <TextMedium style={{color: "#474747", fontSize: 15, }}>Got to Bookings</TextMedium>
                                             </Pressable>

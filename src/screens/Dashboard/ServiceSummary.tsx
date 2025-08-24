@@ -1,15 +1,29 @@
 import { Entypo, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React from "react"
-import { Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
+import React, { useContext, useEffect } from "react"
+import { ActivityIndicator, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import { splitIntoParagraphs } from "../../services/utils";
 import { TextRegular } from "../../component/StyledText";
+import { DashboardContext } from "./DashboardStack";
 
 export default function ServiceSummary () {
     const navigation = useNavigation<StackNavigationProp<any>>();
+        const {isSubmitting, getArtisanByProfessionApiCall, allArtisanByProfession, createBookingRes} = useContext<any>(DashboardContext)
+        // console.log("createBookingRes: ", createBookingRes);
+        
+        const route = useRoute<any>();
+    const { key } = route.params as { key: string };
+    // console.log("allArtisanByProfession: ", allArtisanByProfession);
 
+    useEffect(()=>{
+        const initiate = async () =>{
+            await getArtisanByProfessionApiCall(key)
+        }
+        initiate()
+    }, [])
+    
     const handleSubmit = () => {
         // navigation.navigate('PinCode')
         navigation.navigate("TabNavigation", {
@@ -22,6 +36,12 @@ export default function ServiceSummary () {
 
     return(
         <SafeAreaView style={styles.container}>
+            {isSubmitting?.artisanByProfession ?
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "white" }}>
+                    {/* <StatusBar backgroundColor="#fff" translucent /> */}
+                    <ActivityIndicator size="small" color="black" />
+                </View>
+                :
             <View style={[styles.BodySpacing, {flex: 1}]}>
              <View style={{ flexDirection: "row", alignItems: "center", marginTop: StatusBar.currentHeight }}>
                     <Pressable
@@ -37,17 +57,18 @@ export default function ServiceSummary () {
                     <Text
                         style={[styles.nameIdentifier, { marginTop: 25, fontWeight: 600}]}
                     >
-                        House Cleaning
+                        {allArtisanByProfession?.jobType?.name}
                     </Text>
                     <View style={{flex: 1}}>
                         <ScrollView bounces={false}>
-                    <TextRegular style={styles.descText}>{splitIntoParagraphs('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque diam, fermentum a hendrerit a, sollicitudin ut ex. Vivamus fermentum, dolor nec ultrices blandit, ligula tellus semper lectus, et facilisis nunc lectus a arcu. Nam in efficitur nulla. Fusce hendrerit nisi a metus malesuada faucibus. Fusce tristique blandit ligula, a gravida lorem porta nec. Morbi leo justo, efficitur sit amet justo et, elementum consectetur elit. Curabitur aliquam turpis sed lorem porttitor, sit amet mattis est gravida. Nam id eleifend nulla, eget rhoncus odio. In hac habitasse platea dictumst. Pellentesque maximus ultricies sem vel pretium. Sed a viverra ligula. Suspendisse fringilla dolor eu lorem euismod, eget pharetra mauris tempus. Sed convallis velit odio, vel dictum augue porta a. Quisque vulputate tempor mattis.')}</TextRegular>
+                    <TextRegular style={styles.descText}>{allArtisanByProfession?.jobType?.description}</TextRegular>
                     </ScrollView>
                     </View>
                     <View style={{width: "100%"}}>
                 <AuthSubmitButton handleSubmit={handleSubmit} marginTOP={38} confirm={true} loading={false} title={"Book Now"} buttonColor="#FA4E61" loadColor="black" textColor={"white"} />
                     </View>
                     </View>
+}
         </SafeAreaView>
     )
 }
