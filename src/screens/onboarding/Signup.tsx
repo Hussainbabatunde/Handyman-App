@@ -22,12 +22,12 @@ import AppContext from "../../context";
 export default function Signup() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const [errors, setErrors] = useState<any>({}); // Store error messages
-    const { valueSetupProfile, setValueSetupProfile, phoneNumber } =
+    const { valueSetupProfile, setValueSetupProfile, phoneNumber, checked, setChecked } =
         useContext(OnboardContext);
         const {jobTypes} = useContext(AppContext)
     const [confirm, setConfirm] = useState(false);
     const [focusedInput, setFocusedInput] = useState<any>(null); // Track focused input
-    const [checked, setChecked] = useState(false)
+    
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -170,12 +170,7 @@ export default function Signup() {
                         value={valueSetupProfile?.email}
                         onChangeText={(text) => handleInputChange("email", text)} />
                     {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-                    <Pressable onPress={()=>{
-                        setChecked(!checked)
-                    }} style={styles.checkboxView}>
-                        {checked? <MaterialIcons name="check-box" size={22} color="#FA4E61" /> : <MaterialCommunityIcons name="checkbox-blank-outline" size={22} color="#ABABAB" />}
-                        <TextRegular style={styles.checkboxText}>Are you an <TextBold>artisan</TextBold>?</TextRegular>
-                    </Pressable>
+                    
 
 {checked && <View style={{flex: 1}}>
                     {/* Selected tags + input */}

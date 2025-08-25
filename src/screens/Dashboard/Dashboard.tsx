@@ -23,6 +23,8 @@ const Dashboard = () => {
   const { dispatch, logoutUser, removeUserData, userData, jobTypes } =
     React.useContext<any>(AppContext);
     const {isSubmitting, getArtisanByProfessionApiCall, allArtisanByProfession} = useContext<any>(DashboardContext)
+    // console.log("userData: ", userData);
+    
   const navigation = useNavigation<StackNavigationProp<any>>();
     const activity = [
         {
@@ -80,7 +82,7 @@ const Dashboard = () => {
         <View style={styles.profileView}>
             <Image source={Avatar} style={{width: 35, height: 35}} />
             <View style={styles.nameHelpView}>
-                <TextSemiBold style={{color: "#242424", fontSize: 18}}>{capitalize(userData?.user?.firstName)}</TextSemiBold>
+                <TextSemiBold style={{color: "#242424", fontSize: 18}}>{capitalize(userData?.data?.firstName ?? userData?.user?.firstName)}</TextSemiBold>
                 <TextRegular style={{color: "#898A8D", fontSize: 14}}>Need some help today?</TextRegular>
             </View>
         </View>
@@ -138,7 +140,7 @@ const Dashboard = () => {
   ))}
 </View>
 
-<Pressable
+{/* <Pressable
               accessible={true}
               accessibilityRole="button"
               accessibilityLabel="Log out"
@@ -166,7 +168,7 @@ const Dashboard = () => {
               >
                 Logout
               </TextMedium>
-            </Pressable>
+            </Pressable> */}
 
       </View>
       </SafeAreaView>

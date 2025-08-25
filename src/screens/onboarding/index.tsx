@@ -58,6 +58,7 @@ export default function OnboardStackScreen() {
     }
   );
   const [registerRes, setRegisterRes] = useState<RegisterResponse | null>(null)
+  const [checked, setChecked] = useState(false)
 
 const verifyPhoneApiCall = async (value: verifyType) => {
     Keyboard.dismiss();
@@ -216,7 +217,9 @@ const verifyPhoneApiCall = async (value: verifyType) => {
         registerApiCall,
         registerRes,
         loginApiCall,
-        resendPhoneOtpApiCall
+        resendPhoneOtpApiCall,
+        checked, 
+        setChecked
       }}
     >
       <OnboardStack.Navigator

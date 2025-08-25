@@ -145,10 +145,21 @@ function TabNavigation() {
                 return (
                   <TouchableOpacity
                     key={route.key}
+                    onPress={() => {
+    if (route.name === "DashboardNavigation") {
+      props.navigation.navigate("DashboardNavigation", { screen: "Dashboard" });
+    } else if (route.name === "BookingsNavigation") {
+      props.navigation.navigate("BookingsNavigation", { screen: "Bookings" });
+    } else if (route.name === "ProfileNavigation") {
+      props.navigation.navigate("ProfileNavigation", { screen: "Profile" });
+    } else {
+      props.navigation.navigate(route.name);
+    }
+  }}
                     accessibilityRole="button"
                     accessibilityState={isFocused ? { selected: true } : {}}
                     accessibilityLabel={options.tabBarAccessibilityLabel}
-                    onPress={() => props.navigation.navigate(route.name)}
+                    // onPress={() => props.navigation.navigate(route.name)}
                     style={{
                       flex: 1,
                       justifyContent: 'center',
@@ -169,6 +180,24 @@ function TabNavigation() {
             </View>
           );
         }}
+        // screenListeners={({ navigation }) => ({
+        //   tabPress: (e) => {
+        //     // Reset to first route of the tab when pressed
+        //     const state = navigation.getState();
+
+        //     // Get currently pressed tab
+        //     const tabRoute = state.routes[state.index];
+        //     console.log("tabRoute: ", tabRoute);
+            
+
+        //     if (tabRoute.state) {
+        //       // Reset stack inside that tab to first screen
+        //       navigation.navigate(tabRoute.name, {
+        //         screen: tabRoute.state.routes[0].name,
+        //       });
+        //     }
+        //   },
+        // })}
       >
         <Tab.Screen
           name="DashboardNavigation"

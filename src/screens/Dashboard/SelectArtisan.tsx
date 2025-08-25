@@ -20,71 +20,74 @@ import StarRating from "../../component/StarRating";
 export default function SelectArtisan() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
-            const {isSubmitting, getArtisanByProfessionApiCall, allArtisanByProfession, createBookingApiCall} = useContext<any>(DashboardContext)
-            // console.log("all artisans profession: ", allArtisanByProfession);
-            
+    const { isSubmitting, getArtisanByProfessionApiCall, allArtisanByProfession, createBookingApiCall } = useContext<any>(DashboardContext)
+    // console.log("all artisans profession: ", allArtisanByProfession);
+
 
 
     const handleSubmit = async (item: any) => {
         // navigation.navigate('PinCode')
-        await createBookingApiCall(item?.id, allArtisanByProfession?.jobType?.id)
-    //     navigation.navigate("TabNavigation", {
-    //   screen: "DashboardNavigation",
-    //   params: {
-    //     screen: "BookingSuccess",
-    //   },
-    // })
+        // await createBookingApiCall(item?.id, allArtisanByProfession?.jobType?.id)
+        navigation.navigate("TabNavigation", {
+            screen: "DashboardNavigation",
+            params: {
+                screen: "ArtisanDetails",
+                params: {
+                    artisanDetail: item,
+                },
+            },
+        })
     }
 
 
     return (
         <SafeAreaView style={styles.container}>
             <KeyboardAvoidingView
-              style={{ flex: 1 }}
-              behavior={Platform.OS === "ios" ? "padding" : undefined}
-              // keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0} // adjust if you have header/navbar
+                style={{ flex: 1 }}
+                behavior={Platform.OS === "ios" ? "padding" : undefined}
+            // keyboardVerticalOffset={Platform.OS === "ios" ? 80 : 0} // adjust if you have header/navbar
             >
-            <View style={[styles.BodySpacing, { flex: 1 }]}>
-                <View style={{ flexDirection: "row", alignItems: "center", marginTop: StatusBar.currentHeight }}>
-                    <Pressable
-                        accessible={true}
-                        accessibilityRole="button"
-                        accessibilityLabel="Back button"
-                        onPress={() => navigation.goBack()}
-                        style={styles.backButton}
+                <View style={[styles.BodySpacing, { flex: 1 }]}>
+                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: StatusBar.currentHeight }}>
+                        <Pressable
+                            accessible={true}
+                            accessibilityRole="button"
+                            accessibilityLabel="Back button"
+                            onPress={() => navigation.goBack()}
+                            style={styles.backButton}
+                        >
+                            <MaterialIcons name="arrow-back" size={22} color="#FA4E61" />
+                        </Pressable>
+                    </View>
+                    <Text
+                        style={[styles.nameIdentifier, { marginTop: 25, fontWeight: 600 }]}
                     >
-                        <MaterialIcons name="arrow-back" size={22} color="#FA4E61" />
-                    </Pressable>
+                        Select a Artisan
+                    </Text>
+                    <TextRegular style={{ color: "#696969", fontSize: 16, marginTop: 10, marginBottom: 4 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit</TextRegular>
+                    <View style={{ flex: 1 }}>
+                        <FlatList
+                            data={allArtisanByProfession?.data}
+                            keyExtractor={(item) => item.id}
+                            contentContainerStyle={{ paddingVertical: 10 }}
+                            renderItem={({ item }) => (
+                                <Pressable onPress={() => handleSubmit(item)} style={styles.artisanView}>
+                                    <Image source={{ uri: item?.profileImg ?? "https://runnershive.s3.eu-west-1.amazonaws.com/Portrait_Placeholder-lnhuBpImRh.png" }} style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 50 }} />
+                                    <View style={{ marginLeft: 12 }}>
+                                        <TextSemiBold style={styles.nameTag}>{capitalize(item?.firstName)} {capitalize(item?.lastName)}</TextSemiBold>
+                                        <TextRegular style={styles.smallerText}>
+                                            Joined {moment(item?.createdAt).format("MMMM, YYYY")}
+                                        </TextRegular>
+                                        <View style={{ flexDirection: "row", marginTop: 4 }}>
+                                            <StarRating rating={item?.stars} />
+                                        </View>
+                                    </View>
+                                </Pressable>
+                            )}
+                        />
+                    </View>
                 </View>
-                <Text
-                    style={[styles.nameIdentifier, { marginTop: 25, fontWeight: 600 }]}
-                >
-                    Select a Artisan
-                </Text>
-                                        <TextRegular style={{ color: "#696969", fontSize: 16, marginTop: 10, marginBottom: 4 }}>Lorem ipsum dolor sit amet, consectetur adipiscing elit</TextRegular>
-                <View style={{ flex: 1 }}>
-                    <FlatList
-      data={allArtisanByProfession?.data}
-      keyExtractor={(item) => item.id}
-      contentContainerStyle={{ paddingVertical: 10 }}
-      renderItem={({ item }) => (
-        <Pressable onPress={() => handleSubmit(item)} style={styles.artisanView}>
-          <Image source={userProfilePic} style={{ width: 60, height: 60 }} />
-          <View style={{ marginLeft: 12 }}>
-            <TextSemiBold style={styles.nameTag}>{capitalize(item?.firstName)} {capitalize(item?.lastName)}</TextSemiBold>
-            <TextRegular style={styles.smallerText}>
-              Joined {moment(item?.createdAt).format("MMMM, YYYY")}
-            </TextRegular>
-            <View style={{ flexDirection: "row", marginTop: 4 }}>
-              <StarRating rating={item?.stars} />
-            </View>
-          </View>
-        </Pressable>
-      )}
-    />
-                </View>
-            </View>
-                    <ModalLoading verify={isSubmitting?.createBooking} />
+                {/* <ModalLoading verify={isSubmitting?.createBooking} /> */}
             </KeyboardAvoidingView>
         </SafeAreaView>
     )

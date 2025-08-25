@@ -20,6 +20,7 @@ import BookingSuccess from './BookingSuccess';
 import BookingDetails from './BookingDetails';
 import { createBookingApi, getArtisanByProfessionApi } from '../../services';
 import { ArtisanByProfessionType, BookingResponse } from '../../services/ApiTypes';
+import ArtisanDetails from './ArtisanDetails';
 
 const Stack = createStackNavigator();
 
@@ -61,7 +62,7 @@ const DashboardNavigation = ({navigation, route}: any) => {
       await getArtisanByProfessionApi(userToken, key)
         .then((response) => response)
         .then(async (data) => {
-          // console.log("all artisan by profession: ", data);
+          console.log("all artisan by profession: ", data);
           setAllArtisanByProfession(data)
       // setIsSubmitting((prev) => ({...prev, artisanByProfession: false}));
       //     navigation.navigate("OnboardStackScreen", {
@@ -152,6 +153,11 @@ const DashboardNavigation = ({navigation, route}: any) => {
         <Stack.Screen
           name="BookingDetails"
           component={BookingDetails}
+          options={{headerShown: false, gestureEnabled: false}}
+        />
+        <Stack.Screen
+          name="ArtisanDetails"
+          component={ArtisanDetails}
           options={{headerShown: false, gestureEnabled: false}}
         />
       </Stack.Navigator>

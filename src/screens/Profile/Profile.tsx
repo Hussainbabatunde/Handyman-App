@@ -25,8 +25,8 @@ const Profile = () => {
             <Feather name="edit-3" size={10} color="white" />
           </View>
       </View>
-      <TextBold style={{color: "#FA4E61", marginTop: 10, fontSize: 18}}>{capitalize(userData?.user?.firstName)} {capitalize(userData?.user?.lastName)}</TextBold>
-      <TextRegular style={{color: "black", fontSize: 14}}>{userData?.user?.email}</TextRegular>
+      <TextBold style={{color: "#FA4E61", marginTop: 10, fontSize: 18}}>{capitalize(userData?.data?.firstName ?? userData?.user?.firstName)} {capitalize(userData?.data?.lastName ?? userData?.user?.lastName)}</TextBold>
+      <TextRegular style={{color: "black", fontSize: 14}}>{userData?.data?.email ?? userData?.user?.email}</TextRegular>
       </View>
 
       <TextSemiBold style={{color: "#9999A3", fontSize: 12, marginTop: 50}}>Account</TextSemiBold>

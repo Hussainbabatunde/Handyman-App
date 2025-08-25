@@ -1,5 +1,5 @@
 import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from 'react-native'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { TextBold, TextMedium, TextRegular, TextSemiBold } from '../../component/StyledText'
 import WomanWalking from "../../../assets/images/NoBookingImg.png"
@@ -22,6 +22,18 @@ const Bookings = () => {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const {getAllBookingsApiCall, allBookingRes, isSubmitting} = useContext<any>(BookingsContext)
     const [step, setStep] = useState("upcoming")
+    const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(async () => {
+    try {
+      setRefreshing(true);
+      await getAllBookingsApiCall(); // call your API
+    } catch (error) {
+      console.error("Refresh error:", error);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [getAllBookingsApiCall]);
     // console.log("allBookingRes: ", allBookingRes);
     
     const activity = [
@@ -67,27 +79,63 @@ const Bookings = () => {
     },[])
 
     // Filter tasks depending on step
+  // const filteredData = (allBookingRes?.data ?? [])
+  // .filter((item: any) => {
+  //   const scheduledDate = moment(item.scheduledAt);
+  //   if (step === "upcoming") {
+  //     return scheduledDate.isAfter(moment()); // future tasks
+  //   } else {
+  //     return scheduledDate.isBefore(moment()); // past tasks
+  //   }
+  // })
+  // .map((item: any) => {
+  //   // find matching activity by jobType.name
+  //   const match = activity.find(act => act.title === item.jobType?.name);
+
+  //   return {
+  //     ...item,
+  //     jobType: {
+  //       ...item.jobType,
+  //       img: match?.img || null, // add img into jobType
+  //     },
+  //   };
+  // });
+
   const filteredData = (allBookingRes?.data ?? [])
   .filter((item: any) => {
     const scheduledDate = moment(item.scheduledAt);
+
+    const isRejected = item.status === "rejected";
+    const isCompleted = item.status === "accepted" && item.artisanStatus === "completed";
+
     if (step === "upcoming") {
-      return scheduledDate.isAfter(moment()); // future tasks
+      // only future tasks that are not rejected or completed
+      return (
+        // scheduledDate.isAfter(moment()) &&
+        !isRejected &&
+        !isCompleted
+      );
     } else {
-      return scheduledDate.isBefore(moment()); // past tasks
+      // past includes: rejected, completed, or scheduled in the past
+      return (
+        // scheduledDate.isBefore(moment()) ||
+        isRejected ||
+        isCompleted
+      );
     }
   })
   .map((item: any) => {
-    // find matching activity by jobType.name
     const match = activity.find(act => act.title === item.jobType?.name);
 
     return {
       ...item,
       jobType: {
         ...item.jobType,
-        img: match?.img || null, // add img into jobType
+        img: match?.img || null,
       },
     };
   });
+
 
 
 
@@ -193,6 +241,16 @@ const Bookings = () => {
           data={filteredData}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
+          refreshing={refreshing}
+          ListHeaderComponent={
+    refreshing ? (
+      <View style={{ paddingVertical: 10 }}>
+        <ActivityIndicator size="small" color="gray" />
+      </View>
+    ) : null
+  }
+      onRefresh={onRefresh}
+      showsVerticalScrollIndicator={false}
         />
       ) : (
         // Empty state

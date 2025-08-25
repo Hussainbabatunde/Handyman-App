@@ -83,7 +83,7 @@ export default function BookingDetails() {
                         </View>
                     </View>
                     <Pressable onPress={handleSubmit} style={styles.artisanView}>
-                            <Image source={userProfilePic} style={{width: 60, height: 60}} />
+                            <Image source={userProfilePic} style={{width: 60, height: 60, objectFit: "cover"}} />
                             <View style={{marginLeft: 12}}>
                                 <TextSemiBold style={styles.nameTag}>{capitalize(createBookingRes?.data?.booking?.artisan?.firstName)} {capitalize(createBookingRes?.data?.booking?.artisan?.lastName)}</TextSemiBold>
                                 <TextRegular style={styles.smallerText}>Joined {moment(createBookingRes?.data?.booking?.artisan?.createdAt).format("MMMM, YYYY")}</TextRegular>

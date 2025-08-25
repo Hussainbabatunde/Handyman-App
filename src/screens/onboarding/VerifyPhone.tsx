@@ -24,7 +24,7 @@ export default function VerifyPhone () {
         const {jobTypes} = useContext<any>(AppContext)
         
     
-  const { verifyPhoneApiCall, isSubmitting } = useContext(OnboardContext);
+  const { verifyPhoneApiCall, isSubmitting, checked, setChecked } = useContext(OnboardContext);
 
     const handleSubmit = async (values: any) => {
         values.phoneNo =  values.phoneNumber
@@ -68,6 +68,12 @@ export default function VerifyPhone () {
               onChangeText={handleChange("phoneNumber")}
               onBlur={handleBlur("phoneNumber")}
               value={values.phoneNumber} />
+              <Pressable onPress={()=>{
+                                      setChecked(!checked)
+                                  }} style={styles.checkboxView}>
+                                      {checked? <MaterialIcons name="check-box" size={22} color="#FA4E61" /> : <MaterialCommunityIcons name="checkbox-blank-outline" size={22} color="#ABABAB" />}
+                                      <TextRegular style={styles.checkboxText}>Are you an <TextBold>artisan</TextBold>?</TextRegular>
+                                  </Pressable>
                     {errors.phoneNumber && touched.phoneNumber && (
               <Text style={{ color: "red", marginTop: 5 }}>{errors.phoneNumber}</Text>
             )}

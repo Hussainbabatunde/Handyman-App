@@ -14,7 +14,7 @@ export default function StarRating({ rating, max = 5 }: StarRatingProps) {
           key={index}
           name="star"
           size={14}
-          color={index < rating ? "#FFC61C" : "#FFFFFF99"}
+          color={index < rating ? "#FFC61C" : "#D3D3D3"}
           style={{ marginRight: 2 }}
         />
       ))}
