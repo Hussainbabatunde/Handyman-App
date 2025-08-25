@@ -17,6 +17,7 @@ import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import AppContext from '../../context'
 import { DashboardContext } from './DashboardStack'
+import { capitalize } from '../../context/actions/utils'
 
 const Dashboard = () => {
   const { dispatch, logoutUser, removeUserData, userData, jobTypes } =
@@ -79,7 +80,7 @@ const Dashboard = () => {
         <View style={styles.profileView}>
             <Image source={Avatar} style={{width: 35, height: 35}} />
             <View style={styles.nameHelpView}>
-                <TextSemiBold style={{color: "#242424", fontSize: 18}}>Oluwabusayo</TextSemiBold>
+                <TextSemiBold style={{color: "#242424", fontSize: 18}}>{capitalize(userData?.user?.firstName)}</TextSemiBold>
                 <TextRegular style={{color: "#898A8D", fontSize: 14}}>Need some help today?</TextRegular>
             </View>
         </View>

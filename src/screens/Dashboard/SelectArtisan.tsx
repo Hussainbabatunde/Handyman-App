@@ -15,6 +15,7 @@ import { FlatList } from "react-native-gesture-handler";
 import { DashboardContext } from "./DashboardStack";
 import { capitalize } from "../../context/actions/utils";
 import ModalLoading from "../../component/modals/ModalLoading";
+import StarRating from "../../component/StarRating";
 
 export default function SelectArtisan() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -75,8 +76,7 @@ export default function SelectArtisan() {
               Joined {moment(item?.createdAt).format("MMMM, YYYY")}
             </TextRegular>
             <View style={{ flexDirection: "row", marginTop: 4 }}>
-              <AntDesign name="star" size={14} color="#FFC61C" />
-              <AntDesign name="star" size={14} color="#FFFFFF99" />
+              <StarRating rating={item?.stars} />
             </View>
           </View>
         </Pressable>

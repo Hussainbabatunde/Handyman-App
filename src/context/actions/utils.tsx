@@ -33,3 +33,12 @@ export function getStatusColor(
 
   return "gray"; // fallback for unknown statuses
 }
+
+
+export function maskMiddle(value: string): string {
+  if (value.length <= 8) return value; // too short to mask
+
+  const start = value.slice(0, Math.floor((value.length - 4) / 2));
+  const end = value.slice(Math.ceil((value.length + 4) / 2));
+  return start + "****" + end;
+}

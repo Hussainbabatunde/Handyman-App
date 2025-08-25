@@ -33,6 +33,11 @@ export const verifyPhoneApi = async (values: object) => {
   return data;
 }
 
+export const resendPhoneOtpApi = async (values: object) => {
+  const { data } = await axios.post(`auth/resend-otp`, values);
+  return data;
+}
+
 export const validatePhoneApi = async (values: object) => {
   const { data } = await axios.post(`auth/validate-otp`, values);
   return data;

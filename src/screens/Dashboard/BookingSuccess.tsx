@@ -12,13 +12,14 @@ import userProfilePic from "../../../assets/images/userProfilePic.png"
 import { DashboardContext } from "./DashboardStack";
 import moment from "moment";
 import { capitalize } from "../../context/actions/utils";
+import StarRating from "../../component/StarRating";
 
 export default function BookingSuccess() {
     const navigation = useNavigation<StackNavigationProp<any>>();
     const { countries, dispatch, userData, setUserData, setLogOutUser } = useContext<any>(AppContext);
 
             const {createBookingRes} = useContext<any>(DashboardContext)
-            // console.log("createBookingRes: ", createBookingRes);
+            // console.log("createBookingRes: ", createBookingRes?.data?.booking?.artisan);
             
 
     return (
@@ -54,8 +55,7 @@ export default function BookingSuccess() {
                                 <TextSemiBold style={styles.nameTag}>{capitalize(createBookingRes?.data?.booking?.artisan?.firstName)} {capitalize(createBookingRes?.data?.booking?.artisan?.lastName)}</TextSemiBold>
                                 <TextRegular style={styles.smallerText}>Joined {moment(createBookingRes?.data?.booking?.artisan?.createdAt).format("MMMM, YYYY")}</TextRegular>
                                 <View style={{flexDirection: "row", marginTop: 4}}>
-                                    <AntDesign name="star" size={14} color="#FFC61C" />
-                                    <AntDesign name="star" size={14} color="#FFFFFF99" />
+                                    <StarRating rating={createBookingRes?.data?.booking?.artisan?.stars} />
                                 </View>
                             </View>
                         </Pressable>

@@ -23,6 +23,7 @@ import { getFocusedRouteNameFromRoute } from "@react-navigation/native";
 import { TextMedium, TextSemiBold } from "../component/StyledText";
 import DashboardNavigation from "../screens/Dashboard/DashboardStack";
 import BookingsNavigation from "../screens/Bookings/BookingsStack";
+import ProfileNavigation from "../screens/Profile/ProfileStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -34,7 +35,7 @@ const getActiveRouteName = (route: any) => {
   // Map tab navigator names to their default/main screen names
   const routeMapping: any = {
     'BookingsNavigation': 'Bookings',
-    'ExchangeNavigation': 'Exchange', 
+    'ProfileNavigation': 'Profile', 
     'TransactionNavigation': 'Transaction',
     'DashboardNavigation': 'Dashboard'
   };
@@ -79,7 +80,7 @@ function TabNavigation() {
           }
           
           // Define which routes should show the tab bar
-          const tabBarVisibleRoutes = ['Dashboard', 'Bookings', 'Exchange', 'Transaction'];
+          const tabBarVisibleRoutes = ['Dashboard', 'Bookings', 'Exchange', 'Profile'];
           
           // Hide tab bar for specific routes
           if (!tabBarVisibleRoutes.includes(routeName)) {
@@ -118,6 +119,12 @@ function TabNavigation() {
                       ? require("../../assets/images/activeBookings.png")
                       : require("../../assets/images/inactiveBookings.png");
                     textLabel = "Bookings";
+                    break;
+                  case "ProfileNavigation":
+                    iconSource = isFocused
+                      ? require("../../assets/images/activeAccount.png")
+                      : require("../../assets/images/inActiveAccount.png");
+                    textLabel = "Account";
                     break;
                   // case "TransactionNavigation":
                   //   iconSource = isFocused
@@ -211,6 +218,32 @@ function TabNavigation() {
                 style={{ color: focused ? "#E13548" : "#646568", fontSize: 12, paddingBottom: 10 }}
               >
                 Bookings
+              </TextMedium>
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="ProfileNavigation"
+          component={ProfileNavigation}
+          options={{
+            title: "Profile",
+            headerShown: false,
+            tabBarActiveTintColor: "#33BA76",
+            tabBarIcon: ({ color, focused }) => (
+              <Image
+                source={
+                  focused
+                      ? require("../../assets/images/activeHome.png")
+                      : require("../../assets/images/inactiveHome.png")
+                }
+                style={{ width: 24, height: 24, resizeMode: "contain" }}
+              />
+            ),
+            tabBarLabel: ({ focused, color }) => (
+              <TextMedium
+                style={{ color: focused ? "#E13548" : "#646568", fontSize: 12, paddingBottom: 10 }}
+              >
+                Profile
               </TextMedium>
             ),
           }}

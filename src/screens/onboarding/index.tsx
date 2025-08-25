@@ -17,7 +17,7 @@ import GetStarted from "./GetStarted";
 import Signup from "./Signup";
 import SignupSuccess from "./SignupSuccess";
 import { createUserType, RegisterResponse, validatePhoneResponse, validateType, verifyPhoneResType, verifyType } from "../../services/ApiTypes";
-import { loginPhoneApi, registerApi, validatePhoneApi, verifyPhoneApi } from "../../services";
+import { loginPhoneApi, registerApi, resendPhoneOtpApi, validatePhoneApi, verifyPhoneApi } from "../../services";
 import Password from "./Password";
 import ConfirmPassword from "./ConfirmPassword";
 
@@ -43,6 +43,7 @@ export default function OnboardStackScreen() {
     login: false
   });
   const [verifyPhoneRes, setVerifyPhoneRes] = useState<verifyPhoneResType | null>(null)
+  const [resendPhoneOtpRes, setResendPhoneOtpRes] = useState<any>(null)
   const [validatePhoneRes, setValidatePhoneRes] = useState<validatePhoneResponse | null>(null)
   const [phoneNumber, setPhoneNumber] = useState<string>('')
   const [valueSetupProfile, setValueSetupProfile] = useState<createUserType>(
@@ -70,14 +71,35 @@ const verifyPhoneApiCall = async (value: verifyType) => {
         setVerifyPhoneRes(data)
         navigation.navigate("OnboardStackScreen", {
           screen: "ValidatePhone",
+          params: {
+            phoneNo: value?.phoneNo
+          }
         });
     setIsSubmitting((prev) => ({...prev, verifyPhone: false}));
-    //     navigation.navigate("TabBancNavigation", {
-    //   screen: "ProfileNavigation",
-    //   params: {
-    //     screen: "TransactionPin",
-    //   },
-    // })
+      })
+      .catch((error) => {
+    setIsSubmitting((prev) => ({...prev, verifyPhone: false}));
+        console.log(error?.response, "error_____");
+        errorResponse({ error, dispatch });
+      })
+      .then(() => 
+    setIsSubmitting((prev) => ({...prev, verifyPhone: false})));
+  };
+
+  const resendPhoneOtpApiCall = async (value: verifyType) => {
+    Keyboard.dismiss();
+    // setIsSubmitting((prev) => ({...prev, verifyPhone: true}));
+    // setPhoneNumber(value?.phoneNo)
+    let sentData = {
+      phoneNo: phoneNumber,
+      sessionId: verifyPhoneRes?.sessionId
+    }
+    await resendPhoneOtpApi(sentData)
+      .then((response) => response)
+      .then(async (data) => {
+        // console.log("resend phone otp: ", data);
+        setResendPhoneOtpRes(data)
+    setIsSubmitting((prev) => ({...prev, verifyPhone: false}));
       })
       .catch((error) => {
     setIsSubmitting((prev) => ({...prev, verifyPhone: false}));
@@ -193,7 +215,8 @@ const verifyPhoneApiCall = async (value: verifyType) => {
         setValueSetupProfile,
         registerApiCall,
         registerRes,
-        loginApiCall
+        loginApiCall,
+        resendPhoneOtpApiCall
       }}
     >
       <OnboardStack.Navigator

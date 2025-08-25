@@ -1,5 +1,5 @@
 import { Entypo, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useEffect, useRef, useState } from "react"
 import { Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
@@ -7,6 +7,8 @@ import AuthSubmitButton from "../../component/SubmitActionButton";
 import HiddenTextInput from "../../component/HiddenTextInput";
 import { OnboardContext } from ".";
 import ModalLoading from "../../component/modals/ModalLoading";
+import { maskMiddle } from "../../context/actions/utils";
+import { TextSemiBold } from "../../component/StyledText";
 
 export default function ValidatePhone () {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -21,8 +23,27 @@ export default function ValidatePhone () {
     // const {valuesSignup, ValidatePhoneApiCall, VerifyPhoneNumberApiCall, isSubmittingVerify} = useContext(OnboardBancContext)
     const [timeLeft, setTimeLeft] = useState(90); // total time in seconds
   const endTimeRef = useRef(Date.now() + 90 * 1000); // target time in ms
-  const {verifyPhoneRes, phoneNumber, validatePhoneApiCall, isSubmitting} = useContext(OnboardContext)
-//   console.log("valuesSignup ", verifyPhoneRes);
+  const {verifyPhoneRes, phoneNumber, validatePhoneApiCall, isSubmitting, resendPhoneOtpApiCall} = useContext(OnboardContext)
+  const route = useRoute<any>()
+  const { phoneNo } = route.params;
+//   console.log("phoneNo: ", phoneNo);
+
+useEffect(() => {
+        const interval = setInterval(() => {
+          const now = Date.now();
+          const secondsRemaining = Math.max(Math.floor((endTimeRef.current - now) / 1000), 0);
+          setTimeLeft(secondsRemaining);
+    
+          if (secondsRemaining <= 0) {
+            clearInterval(interval);
+          }
+        }, 1000);
+    
+        return () => clearInterval(interval);
+      }, [timeLeft]);
+    
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
   
 
     const handleOnPress= () =>{
@@ -53,6 +74,15 @@ export default function ValidatePhone () {
     }
     initiate()
     },[code])
+
+    const handleResendPress = async () => {
+      endTimeRef.current = Date.now() + 90 * 1000;
+        // setMinutes(1);
+        // setSeconds(30);
+        setTimeLeft(90)
+        // requestOtpOnSubmit(values)
+        await resendPhoneOtpApiCall()
+      };
 
 
     const codeDigitsArray = new Array(MAX_CODE_LENGTH).fill(0)
@@ -96,7 +126,7 @@ export default function ValidatePhone () {
                     >
                         Validate phone number
                     </Text>
-                    <Text style={styles.descText}>Enter the 4-digit code sent to you at <Text style={[styles.descText, {fontWeight: 600}]}>08023******43</Text></Text>
+                    <Text style={styles.descText}>Enter the 4-digit code sent to you at <Text style={[styles.descText, {fontWeight: 600}]}>{maskMiddle(phoneNo)}</Text></Text>
                         <View style={styles.OTPInputSection}>
         <Pressable style={styles.InputContainer} onPress={handleOnPress} >
             {/* <View style={styles.OTPInput}>
@@ -112,8 +142,20 @@ export default function ValidatePhone () {
             handleOnBlur={handleOnBlur} />
         </View>
 
-        <Pressable style={styles.bgTimer}>
-            <Text style={styles.countDownText}>I haven’t received a code (0:09)</Text>
+        <Pressable style={styles.bgTimer} onPress={handleResendPress}>
+            <Text style={[styles.countDownText, {alignItems: "center"}]}>I haven’t received a code? 
+                {seconds > 0 || minutes > 0 ? (
+                    <TextSemiBold style={[styles.countDownText, {marginLeft: 10, backgroundColor: "#F7FCFA", borderRadius: 5, paddingHorizontal: 8, paddingVertical: 4, fontSize: 16}]}>
+                      ({minutes < 10 ? `0${minutes}` : minutes}:
+      {seconds < 10 ? `0${seconds}` : seconds})
+                    </TextSemiBold>
+                  ) : (
+            // <Pressable accessible={true}
+            // accessibilityRole="button"
+            // accessibilityLabel="Resend code"  style={{alignItems: "flex-end"}}>
+            <TextSemiBold style={{  fontSize: 16}}>Resend Code</TextSemiBold>
+            // </Pressable>
+                  )}</Text>
         </Pressable>
                     </ScrollView>
                     <ModalLoading verify={isSubmitting?.validatePhone} />

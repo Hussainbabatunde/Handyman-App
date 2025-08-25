@@ -13,6 +13,7 @@ import moment from "moment";
 import userProfilePic from "../../../assets/images/userProfilePic.png"
 import { DashboardContext } from "./DashboardStack";
 import { capitalize } from "../../context/actions/utils";
+import StarRating from "../../component/StarRating";
 
 export default function BookingDetails() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -42,7 +43,14 @@ export default function BookingDetails() {
                             accessible={true}
                             accessibilityRole="button"
                             accessibilityLabel="Back button"
-                            onPress={() => navigation.goBack()}
+                            onPress={async () =>{
+                                                 navigation.navigate("TabNavigation", {
+      screen: "DashboardNavigation",
+      params: {
+        screen: "Dashboard",
+      },
+    })
+                                }}
                             style={styles.backButton}
                         >
                             <MaterialIcons name="arrow-back" size={22} color="#FA4E61" />
@@ -80,8 +88,7 @@ export default function BookingDetails() {
                                 <TextSemiBold style={styles.nameTag}>{capitalize(createBookingRes?.data?.booking?.artisan?.firstName)} {capitalize(createBookingRes?.data?.booking?.artisan?.lastName)}</TextSemiBold>
                                 <TextRegular style={styles.smallerText}>Joined {moment(createBookingRes?.data?.booking?.artisan?.createdAt).format("MMMM, YYYY")}</TextRegular>
                                 <View style={{flexDirection: "row", marginTop: 4}}>
-                                    <AntDesign name="star" size={14} color="#FFC61C" />
-                                    <AntDesign name="star" size={14} color="#FFFFFF99" />
+                                                                    <StarRating rating={createBookingRes?.data?.booking?.artisan?.stars} />
                                 </View>
                             </View>
                         </Pressable>
