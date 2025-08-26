@@ -29,7 +29,7 @@ export default {
     },
     logoutUser: async (dispatch: any) => {
         await AsyncStorage.removeItem('userToken');
-        // await AsyncStorage.removeItem('userData');
+        await AsyncStorage.removeItem('userData');
         // await AsyncStorage.setItem('userData', JSON.stringify({loggedIn: "true"}));
         await AsyncStorage.removeItem('userTokenExp');
         dispatch({ type: 'LOGOUT' });

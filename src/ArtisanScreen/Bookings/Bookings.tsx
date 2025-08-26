@@ -142,7 +142,7 @@ const Bookings = () => {
   const renderItem = ({ item }: any) => (
     <Pressable
     onPress={() =>
-              navigation.navigate("TabNavigation", {
+              navigation.navigate("ArtisanTabNavigation", {
                 screen: "BookingsNavigation",
                 params: {
                   screen: "BookingDetailsPage",
@@ -179,8 +179,8 @@ const Bookings = () => {
         <Text style={{ color: "#696969", fontSize: 11, marginBottom: 3 }}>
           {moment(item?.scheduledAt).format("DD MMMM . hh:mm a")}
         </Text>
-        <Text style={{ fontSize: 14, color: "black" }}>{capitalize(item?.artisan?.firstName)} {capitalize(item?.artisan?.lastName)}</Text>
-        <Text style={{ fontSize: 14, color: "black" }}>{item?.location}</Text>
+        <Text style={{ fontSize: 14, color: "black" }}>{capitalize(item?.requester?.firstName)} {capitalize(item?.requester?.lastName)}</Text>
+        <Text style={{ fontSize: 14, color: "black" }}>{item?.location}.</Text>
 
         <View style={{ alignItems: "flex-start" }}>
           <View
@@ -276,7 +276,7 @@ const Bookings = () => {
           </Text>
           <Pressable
             onPress={() =>
-              navigation.navigate("TabNavigation", {
+              navigation.navigate("ArtisanTabNavigation", {
                 screen: "DashboardNavigation",
                 params: {
                   screen: "Dashboard",

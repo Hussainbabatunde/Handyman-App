@@ -124,7 +124,7 @@ export const AppReducer = (initialState: any, action: any) => {
             return {
                 ...initialState,
                 userToken: null,
-                // userData: null,
+                userData: null,
                 userTokenExp: null,
             };
         default:

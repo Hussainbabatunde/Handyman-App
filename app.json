@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "BlueSky",
-    "slug": "BlueSky",
+    "name": "Handyman",
+    "slug": "Handyman",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.runnershive.BlueSky"
+      "bundleIdentifier": "com.runnershive.Handyman"
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +22,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.runnershive.BlueSky"
+      "package": "com.runnershive.Handyman"
     },
     "web": {
       "favicon": "./assets/favicon.png"

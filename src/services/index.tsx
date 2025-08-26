@@ -85,6 +85,15 @@ export const getAllBookingsApi = async (token: string | null) => {
   return data;
 }
 
+export const getAllArtisanBookingsApi = async (token: string | null) => {
+  const { data } = await axios.get(`bookings/artisan/all`, {
+    headers: {
+      "Authorization":"Bearer " + token
+    }
+  });
+  return data;
+}
+
 export const completeBookingApi = async (token: string | null, id: string, values: object) => {
   const { data } = await axios.post(`bookings/complete/${id}`, values, {
     headers: {
@@ -96,6 +105,15 @@ export const completeBookingApi = async (token: string | null, id: string, value
 
 export const getBookingDetailsApi = async (token: string | null, id: string) => {
   const { data } = await axios.get(`bookings/details/${id}`, {
+    headers: {
+      "Authorization":"Bearer " + token
+    }
+  });
+  return data;
+}
+
+export const updateBookingDetailsApi = async (token: string | null, id: string, values: object) => {
+  const { data } = await axios.patch(`bookings/update/${id}`, values, {
     headers: {
       "Authorization":"Bearer " + token
     }

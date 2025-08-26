@@ -54,6 +54,7 @@ import { navigationRef } from "./src/navigation/RootNavigation";
 import OnboardStackScreen from "./src/screens/onboarding";
 import TabNavigation from "./src/navigation/TabNavigation";
 import { getJobTypesApi } from "./src/services";
+import ArtisanTabNavigation from "./src/navigation/ArtisanTabNavigation";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -171,6 +172,12 @@ function App(): React.JSX.Element {
   };
 
   function HomeScreen() {
+    // useEffect(()=>{
+    //   const init = async () =>{
+    //     await AsyncStorage.clear()
+    //   }
+    //   init()
+    // }, [])
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Text>Home Screen</Text>
@@ -271,6 +278,8 @@ function App(): React.JSX.Element {
     //   });
     //   return unsubscribe;
     // },[])
+    // console.log("state.userData: ", state?.userData);
+    
 
     return (
       <AppContext.Provider
@@ -293,13 +302,24 @@ function App(): React.JSX.Element {
       >
         <NavigationContainer ref={navigationRef}>
           <Stack.Navigator>
-            {state.userToken ? (
+            {/* {state.userToken ? ( */}
+            {(state.userData?.user?.userType == 1) ? (
               <Stack.Screen
                 name="TabNavigation"
                 component={TabNavigation}
                 options={{ headerShown: false }}
               />
-            ) : (
+            ) 
+            :
+            (state.userData?.user?.userType == 2) ? (
+              <Stack.Screen
+                name="ArtisanTabNavigation"
+                component={ArtisanTabNavigation}
+                options={{ headerShown: false }}
+              />
+            )
+            :
+             (
               <Stack.Screen
                 name="OnboardStackScreen"
                 options={{ headerShown: false }}

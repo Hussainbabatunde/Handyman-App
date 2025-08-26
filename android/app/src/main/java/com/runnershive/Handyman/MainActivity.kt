@@ -1,4 +1,4 @@
-package com.runnershive.BlueSky
+package com.runnershive.Handyman
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

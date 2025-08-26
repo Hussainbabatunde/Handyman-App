@@ -1,4 +1,4 @@
-package com.runnershive.BlueSky
+package com.runnershive.Handyman
 
 import android.app.Application
 import android.content.res.Configuration
