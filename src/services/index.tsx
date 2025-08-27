@@ -120,3 +120,21 @@ export const updateBookingDetailsApi = async (token: string | null, id: string, 
   });
   return data;
 }
+
+export const uploadDocument = async (token: any, value: any) => {
+  const { data } = await axios.post(`upload`, value,{
+    headers:{
+      "Content-Type": "multipart/form-data",
+    }
+  });
+  return data;
+}
+
+export const submitKycApi = async (token: any, values: object) => {
+  const { data } = await axios.post(`artisan/kyc`, values, {
+    headers: {
+      "Authorization":"Bearer " + token
+    }
+  });
+  return data;
+}

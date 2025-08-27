@@ -303,7 +303,7 @@ function App(): React.JSX.Element {
         <NavigationContainer ref={navigationRef}>
           <Stack.Navigator>
             {/* {state.userToken ? ( */}
-            {(state.userData?.user?.userType == 1) ? (
+            {(state.userData?.user?.userType == 1 || state.userData?.data?.userType == 1) ? (
               <Stack.Screen
                 name="TabNavigation"
                 component={TabNavigation}
@@ -311,7 +311,7 @@ function App(): React.JSX.Element {
               />
             ) 
             :
-            (state.userData?.user?.userType == 2) ? (
+            (state.userData?.user?.userType == 2 || state.userData?.data?.userType == 2) ? (
               <Stack.Screen
                 name="ArtisanTabNavigation"
                 component={ArtisanTabNavigation}

@@ -1,19 +1,16 @@
 import React, { useContext } from "react";
 import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import SanlamLogo from "../../../assets/images/sanlamLogo.png"
-import WomanWalking from "../../../assets/images/successfulSignup.png"
+import WomanWalking from "../../../assets/images/uncompleteKycImg.png"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import { TextBold, TextMedium, TextRegular } from "../../component/StyledText";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AppContext from "../../context";
-import { OnboardContext } from ".";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function SignupSuccess () {
+export default function UncompletedGetStarted () {
   const navigation = useNavigation<StackNavigationProp<any>>();
   const { countries ,dispatch, userData, setUserData, setLogOutUser } = useContext<any>(AppContext);
-  const {registerRes} = useContext(OnboardContext)
 //   console.log("register res: ", registerRes);
   
 
@@ -24,26 +21,14 @@ export default function SignupSuccess () {
             {/* <Image source={SanlamLogo} style={styles.logoImg} /> */}
             <View style={styles.GetStartedContent}>
                 <Image source={WomanWalking} style={styles.womanWalkingImg} />
-                <TextBold style={styles.descPage}>You are all set!</TextBold>
-<TextRegular style={{color: "#696969", fontSize: 14, textAlign: "center", maxWidth: 324, marginTop: 16, marginBottom: 22}}>Let’s do great things together</TextRegular>
+                <TextBold style={styles.descPage}>Complete KYC</TextBold>
+<TextRegular style={{color: "#696969", fontSize: 14, textAlign: "center", maxWidth: 324, marginTop: 16, marginBottom: 22}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque diam</TextRegular>
                 <Pressable onPress={async () =>{
-                    await AsyncStorage.setItem("from", "register")
-                    if(registerRes?.data?.userType == 1){
-                    await setUserData(dispatch, registerRes?.accessToken, {loggedIn: "true", ...registerRes}, registerRes?.data);
-                    }
-                    else{
-          navigation.navigate("OnboardStackScreen", {
-          screen: "UncompletedGetStarted",
+                    navigation.navigate("OnboardStackScreen", {
+          screen: "CompleteKyc",
         });
-        }
-    //                  navigation.navigate("TabNavigation", {
-    //   screen: "DashboardNavigation",
-    //   params: {
-    //     screen: "Dashboard",
-    //   },
-    // })
     }} style={{backgroundColor: "#FA4E61", paddingHorizontal: 60, paddingVertical: 13, borderRadius: 25}}>
-                    <TextMedium style={{color: "white", fontSize: 15, }}>Get Started</TextMedium>
+                    <TextMedium style={{color: "white", fontSize: 15, }}>Continue</TextMedium>
                 </Pressable>
             </View>
             </SafeAreaView>

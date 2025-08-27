@@ -17,9 +17,13 @@ import GetStarted from "./GetStarted";
 import Signup from "./Signup";
 import SignupSuccess from "./SignupSuccess";
 import { createUserType, RegisterResponse, validatePhoneResponse, validateType, verifyPhoneResType, verifyType } from "../../services/ApiTypes";
-import { loginPhoneApi, registerApi, resendPhoneOtpApi, validatePhoneApi, verifyPhoneApi } from "../../services";
+import { loginPhoneApi, registerApi, resendPhoneOtpApi, submitKycApi, uploadDocument, validatePhoneApi, verifyPhoneApi } from "../../services";
 import Password from "./Password";
 import ConfirmPassword from "./ConfirmPassword";
+import UncompletedGetStarted from "./UncompletedGetStarted";
+import ContactAddress from "./ContactAddress";
+import CompleteKyc from "./CompleteKyc";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const OnboardContext = createContext<PropsAppContext>({});
 const OnboardStack = createStackNavigator();
@@ -40,7 +44,8 @@ export default function OnboardStackScreen() {
     validatePhone: false,
     signup: false,
     register: false,
-    login: false
+    login: false,
+    uploadingMOI: false
   });
   const [verifyPhoneRes, setVerifyPhoneRes] = useState<verifyPhoneResType | null>(null)
   const [resendPhoneOtpRes, setResendPhoneOtpRes] = useState<any>(null)
@@ -59,6 +64,11 @@ export default function OnboardStackScreen() {
   );
   const [registerRes, setRegisterRes] = useState<RegisterResponse | null>(null)
   const [checked, setChecked] = useState(false)
+  const [passportPhotograph, setPassportPhotograph] = useState<string | null>(null)
+  const [meansOfIdentification, setMeansOfIdentification] = useState<string | null>(null)
+  const [address, setAddress] = useState<string | null>(null)
+  const [documentUpload, setDocumentUpload] = useState<any>([])
+  const [loginRes, setLoginRes] = useState<any>(null)
 
 const verifyPhoneApiCall = async (value: verifyType) => {
     Keyboard.dismiss();
@@ -150,7 +160,7 @@ const verifyPhoneApiCall = async (value: verifyType) => {
     await registerApi(valueSetupProfile)
       .then((response) => response)
       .then(async (data) => {
-        // console.log("register: ", data);
+        await AsyncStorage.setItem("userToken", data?.accessToken)
         setRegisterRes(data)
     setIsSubmitting((prev) => ({...prev, register: false}));
         navigation.navigate("OnboardStackScreen", {
@@ -178,9 +188,21 @@ const verifyPhoneApiCall = async (value: verifyType) => {
     await loginPhoneApi(sentData)
       .then((response) => response)
       .then(async (data) => {
-        console.log("login res: ", data);
+        await AsyncStorage.setItem("userToken", data?.accessToken)
+        await AsyncStorage.setItem("from", "login")
+        setLoginRes(data)
         setIsSubmitting((prev) => ({...prev, login: false}));
-        await setUserData(dispatch, data?.accessToken, {loggedIn: "true", ...data}, data?.user);
+        if(data?.user?.userType == 1){
+          await setUserData(dispatch, data?.accessToken, {loggedIn: "true", ...data}, data?.user);
+        }
+        else if(data?.user?.userType == 2 && data?.user?.completedKyc){
+          await setUserData(dispatch, data?.accessToken, {loggedIn: "true", ...data}, data?.user);
+        }
+        else{
+          navigation.navigate("OnboardStackScreen", {
+          screen: "UncompletedGetStarted",
+        });
+        }
         // setVerifyPhoneRes(data)
         // navigation.navigate("OnboardStackScreen", {
         //   screen: "ValidatePhone",
@@ -201,6 +223,73 @@ const verifyPhoneApiCall = async (value: verifyType) => {
     setIsSubmitting((prev) => ({...prev, login: false})));
   };
 
+  const UploadDocmentApi = async (value: any) => {
+      //Keyboard.dismiss();
+      let userToken = await AsyncStorage.getItem("userToken");
+      setIsSubmitting((prev) => ({...prev, uploadingMOI: true}));
+      await uploadDocument(userToken, value).then(response => response)
+        .then(async (data) => {
+      setIsSubmitting((prev) => ({...prev, uploadingMOI: false}));
+          // console.log("data res: ", data);
+          if (data?.name == 'PassportPhotograph') {
+            setPassportPhotograph(data?.url)
+          }
+          else if (data?.name == 'MeansOfIdentification') {
+            setMeansOfIdentification(data?.url)
+          }
+          setDocumentUpload((prevDocs: any) => {
+      // check if document with same name exists
+      const exists = prevDocs.find((doc: any) => doc.name === data.name);
+
+      if (exists) {
+        // replace it
+        return prevDocs.map((doc: any) =>
+          doc.name === data?.name ? data : doc
+        );
+      } else {
+        // add new one
+        return [...prevDocs, data];
+      }
+    });
+          // setUploadedImage(data?.data)
+          // setBankInfo(data?.data)
+        }).catch(error => {
+          // console.log(error?.response?.message, 'error_____')
+      setIsSubmitting((prev) => ({...prev, uploadingMOI: false}));
+          errorResponse({ error, dispatch });
+        })
+      setIsSubmitting((prev) => ({...prev, uploadingMOI: false}));
+    }
+
+    const SubmitKycApiCall = async () => {
+    Keyboard.dismiss();
+    
+    setIsSubmitting((prev) => ({...prev, uploadingMOI: true}));
+    let dataSubmitted = {
+      documents: [...documentUpload, {name: "address", document: address}]
+    }
+    
+      let userToken = await AsyncStorage.getItem("userToken");
+    await submitKycApi(userToken, dataSubmitted)
+      .then((response) => response)
+      .then(async (data) => {
+        let from = await AsyncStorage.getItem("from")
+        if(from == "login"){
+          await setUserData(dispatch, loginRes?.accessToken, {loggedIn: "true", ...loginRes}, loginRes?.user);
+        }
+        else{
+          await setUserData(dispatch, registerRes?.accessToken, {loggedIn: "true", ...registerRes}, registerRes?.data);
+        }
+      })
+      .catch((error) => {
+    setIsSubmitting((prev) => ({...prev, uploadingMOI: false}));
+        console.log(error?.response, "error_____");
+        errorResponse({ error, dispatch });
+      })
+      .then(() => 
+    setIsSubmitting((prev) => ({...prev, uploadingMOI: false})));
+  };
+
   return (
     <OnboardContext.Provider
       value={{
@@ -219,7 +308,14 @@ const verifyPhoneApiCall = async (value: verifyType) => {
         loginApiCall,
         resendPhoneOtpApiCall,
         checked, 
-        setChecked
+        setChecked,
+        UploadDocmentApi,
+        passportPhotograph,
+        meansOfIdentification,
+        setAddress,
+        address,
+        documentUpload,
+        SubmitKycApiCall
       }}
     >
       <OnboardStack.Navigator
@@ -239,6 +335,21 @@ const verifyPhoneApiCall = async (value: verifyType) => {
           name="GetStarted"
           component={GetStarted}
           options={{headerShown: false}}
+        />
+           <OnboardStack.Screen
+          name="UncompletedGetStarted"
+          component={UncompletedGetStarted}
+          options={{headerShown: false, gestureEnabled: false}}
+        />
+        <OnboardStack.Screen
+          name="ContactAddress"
+          component={ContactAddress}
+          options={{headerShown: false, gestureEnabled: false}}
+        />
+        <OnboardStack.Screen
+          name="CompleteKyc"
+          component={CompleteKyc}
+          options={{headerShown: false, gestureEnabled: false}}
         />
             <OnboardStack.Screen
           name="SuccessPage"

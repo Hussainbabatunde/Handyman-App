@@ -274,7 +274,7 @@ const Bookings = () => {
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed neque
             diam
           </Text>
-          <Pressable
+          {/* <Pressable
             onPress={() =>
               navigation.navigate("ArtisanTabNavigation", {
                 screen: "DashboardNavigation",
@@ -291,7 +291,7 @@ const Bookings = () => {
             }}
           >
             <Text style={{ color: "white", fontSize: 15 }}>Book a task</Text>
-          </Pressable>
+          </Pressable> */}
         </View>
       )}
             </View>

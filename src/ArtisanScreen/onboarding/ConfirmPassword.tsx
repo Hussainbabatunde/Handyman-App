@@ -70,7 +70,7 @@ const ConfirmPassword = () => {
   const { valueSetupProfile, setValueSetupProfile, isSubmitting, registerApiCall, phoneNumber } =
           useContext(OnboardContext);
     const [showPassword, setShowPassword] = useState(false)
-          console.log("values profile: ", phoneNumber);
+          // console.log("values profile: ", phoneNumber);
           
           
 

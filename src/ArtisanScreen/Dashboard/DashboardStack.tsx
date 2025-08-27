@@ -18,7 +18,7 @@ import BookArtisan from './BookArtisan';
 import SelectArtisan from './SelectArtisan';
 import BookingSuccess from './BookingSuccess';
 import BookingDetails from './BookingDetails';
-import { createBookingApi, getArtisanByProfessionApi } from '../../services';
+import { createBookingApi, getArtisanByProfessionApi, uploadDocument } from '../../services';
 import { ArtisanByProfessionType, BookingResponse } from '../../services/ApiTypes';
 import ArtisanDetails from './ArtisanDetails';
 
@@ -42,6 +42,8 @@ const DashboardNavigation = ({navigation, route}: any) => {
     jobTypeKey: ""
   })
   const [createBookingRes, setCreateBookingRes] = useState<BookingResponse | null>(null)
+
+  const [loadingImage, setLoadingImage] = React.useState<boolean>(false)
 
   React.useLayoutEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route);
@@ -108,6 +110,8 @@ const DashboardNavigation = ({navigation, route}: any) => {
       setIsSubmitting((prev) => ({...prev, createBooking: false})));
     };
 
+      
+
   return (
     <DashboardContext.Provider
       value={{
@@ -118,13 +122,14 @@ const DashboardNavigation = ({navigation, route}: any) => {
         createBooking,
         createBookingRes, 
         setCreateBookingRes,
-        createBookingApiCall
+        createBookingApiCall,
       }}>
       <Stack.Navigator screenOptions={{
     headerShown: false,
     animation: 'slide_from_right', // Use specific animation types
     // animationDuration: 300,
   }}>
+ 
         <Stack.Screen
           name="Dashboard"
           component={Dashboard}

@@ -17,7 +17,7 @@ import { useNavigation } from '@react-navigation/native'
 import { StackNavigationProp } from '@react-navigation/stack'
 import AppContext from '../../context'
 import { DashboardContext } from './DashboardStack'
-import { capitalize } from '../../context/actions/utils'
+import { capitalize, getStatusColor } from '../../context/actions/utils'
 
 const Dashboard = () => {
   const { dispatch, logoutUser, removeUserData, userData, jobTypes } =
@@ -96,36 +96,76 @@ const Dashboard = () => {
         </View>
       </View>
 
-{/* <Pressable
-              accessible={true}
-              accessibilityRole="button"
-              accessibilityLabel="Log out"
-              onPress={async () => {
-                logoutOnSubmit();
-              }}
+      <View style={{flexDirection: "row", justifyContent: "space-between", marginTop: 24}}>
+        <TextSemiBold style={{color: "#696969", fontSize: 12}}>Upcoming Jobs</TextSemiBold>
+        <Pressable style={{borderBottomWidth: 1, borderBottomColor: "#FA4E61"}}>
+          <TextSemiBold style={{color: "#FA4E61", fontSize: 12}}>View all</TextSemiBold>
+        </Pressable>
+      </View>
+
+      <Pressable
+          // onPress={() =>
+          //           navigation.navigate("TabNavigation", {
+          //             screen: "BookingsNavigation",
+          //             params: {
+          //               screen: "BookingDetailsPage",
+          //               params: {
+          //       details: item
+          //     }
+          //             },
+          //           })
+          //         }
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: "#E4E5E7",
+              paddingVertical: 15,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            {/* Left icon */}
+            <View
               style={{
-                paddingVertical: 15,
-                backgroundColor: "#33ba76",
-                borderRadius: 5,
-                width: "100%",
-                marginTop: 22,
-                opacity: 1,
+                width: 30,
+                height: 30,
+                backgroundColor: "#D9D9D933",
+                borderRadius: 50,
                 justifyContent: "center",
                 alignItems: "center",
-                flexDirection: "row",
               }}
             >
-              <TextMedium
-                style={{
-                  color: "#101011",
-                  fontWeight: "600",
-                  fontSize: 14,
-                }}
-              >
-                Logout
-              </TextMedium>
-            </Pressable> */}
+              <Image source={WomanPainter} style={{ width: 12, height: 12 }} />
+            </View>
+      
+            {/* Task details */}
+            <View style={{ marginLeft: 13 }}>
+              <Text style={{ color: "#696969", fontSize: 11, marginBottom: 3 }}>
+                {/* {moment(item?.scheduledAt).format("DD MMMM . hh:mm a")} */} 10 December . 10:00 am
+              </Text>
+              {/* <Text style={{ fontSize: 14, color: "black" }}>{capitalize(item?.artisan?.firstName)} {capitalize(item?.artisan?.lastName)}</Text> */}
 
+              <Text style={{ fontSize: 14, color: "black" }}>babatunde H</Text>
+              <Text style={{ fontSize: 14, color: "black" }}>Lagos nigera</Text>
+      
+              <View style={{ alignItems: "flex-start" }}>
+                <View
+                  style={{
+                    // backgroundColor: getStatusColor(item?.status, item?.artisanStatus),
+                    backgroundColor: getStatusColor("pending", "completed"),
+                    borderRadius: 4,
+                    paddingHorizontal: 9,
+                    paddingVertical: 4,
+                    marginTop: 9,
+                  }}
+                >
+                  <Text style={{ color: "white", fontSize: 11 }}>
+                    {/* Task {(item?.status == "accepted" && item?.artisanStatus != "pending") ? capitalize(item?.artisanStatus) : capitalize(item?.status)} */}
+                    Task Ongoing
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </Pressable>
       </View>
       </SafeAreaView>
     </View>
