@@ -50,7 +50,7 @@ export default function BookingSuccess() {
                         </View>
                     </View>
                     <Pressable style={styles.artisanView}>
-                                                        <Image source={{ uri: createBookingRes?.data?.booking?.artisan?.profileImg ?? "https://runnershive.s3.eu-west-1.amazonaws.com/Portrait_Placeholder-lnhuBpImRh.png" }} style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 50 }} />
+                                                        <Image source={{ uri: createBookingRes?.data?.booking?.artisan?.profileImg ? createBookingRes?.data?.booking?.artisan?.profileImg : "https://runnershive.s3.eu-west-1.amazonaws.com/Portrait_Placeholder-lnhuBpImRh.png" }} style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 50 }} />
                             <View style={{marginLeft: 12}}>
                                 <TextSemiBold style={styles.nameTag}>{capitalize(createBookingRes?.data?.booking?.artisan?.firstName)} {capitalize(createBookingRes?.data?.booking?.artisan?.lastName)}</TextSemiBold>
                                 <TextRegular style={styles.smallerText}>Joined {moment(createBookingRes?.data?.booking?.artisan?.createdAt).format("MMMM, YYYY")}</TextRegular>

@@ -18,7 +18,7 @@ import BookArtisan from './BookArtisan';
 import SelectArtisan from './SelectArtisan';
 import BookingSuccess from './BookingSuccess';
 import BookingDetails from './BookingDetails';
-import { createBookingApi, getArtisanByProfessionApi, uploadDocument } from '../../services';
+import { createBookingApi, getArtisanByProfessionApi, recentBookingsApi, uploadDocument } from '../../services';
 import { ArtisanByProfessionType, BookingResponse } from '../../services/ApiTypes';
 import ArtisanDetails from './ArtisanDetails';
 
@@ -32,6 +32,7 @@ const DashboardNavigation = ({navigation, route}: any) => {
   const [isSubmitting, setIsSubmitting] = useState({
     artisanByProfession: false,
     createBooking: false,
+    recentBookings: false
   })
   const [allArtisanByProfession, setAllArtisanByProfession] = useState<ArtisanByProfessionType[] | null>(null)
   const [createBooking, setCreateBooking] = useState<any>({
@@ -42,7 +43,7 @@ const DashboardNavigation = ({navigation, route}: any) => {
     jobTypeKey: ""
   })
   const [createBookingRes, setCreateBookingRes] = useState<BookingResponse | null>(null)
-
+  const [recentBookingsDetailsRes, setRecentBookingDetailsRes] = useState<any>(null)
   const [loadingImage, setLoadingImage] = React.useState<boolean>(false)
 
   React.useLayoutEffect(() => {
@@ -110,7 +111,28 @@ const DashboardNavigation = ({navigation, route}: any) => {
       setIsSubmitting((prev) => ({...prev, createBooking: false})));
     };
 
-      
+      const recentBookingDetailsApiCall = async (id: string) => {
+                Keyboard.dismiss();
+                
+                setIsSubmitting((prev) => ({...prev, recentBookings: true}));
+                
+              let userToken = await AsyncStorage.getItem("userToken");
+                await recentBookingsApi(userToken)
+                  .then((response) => response)
+                  .then(async (data) => {
+                    // console.log("recent bookings: ", data);
+                    
+                    setRecentBookingDetailsRes(data)
+                setIsSubmitting((prev) => ({...prev, recentBookings: false}));
+                  })
+                  .catch((error) => {
+                setIsSubmitting((prev) => ({...prev, recentBookings: false}));
+                    console.log(error?.response, "error_____");
+                    errorResponse({ error, dispatch });
+                  })
+                  .then(() => 
+                setIsSubmitting((prev) => ({...prev, recentBookings: false})));
+              };
 
   return (
     <DashboardContext.Provider
@@ -123,6 +145,8 @@ const DashboardNavigation = ({navigation, route}: any) => {
         createBookingRes, 
         setCreateBookingRes,
         createBookingApiCall,
+        recentBookingsDetailsRes,
+        recentBookingDetailsApiCall
       }}>
       <Stack.Navigator screenOptions={{
     headerShown: false,

@@ -55,6 +55,7 @@ import OnboardStackScreen from "./src/screens/onboarding";
 import TabNavigation from "./src/navigation/TabNavigation";
 import { getJobTypesApi } from "./src/services";
 import ArtisanTabNavigation from "./src/navigation/ArtisanTabNavigation";
+import { SocketProvider } from "./src/component/SocketContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -340,19 +341,12 @@ function App(): React.JSX.Element {
     //   </Stack.Navigator>
     // </NavigationContainer>
     <ErrorBoundary FallbackComponent={CustomFallback}>
+      <SocketProvider serverUrl="http://localhost:3001">
       <View style={styles.container} onLayout={onLayoutRootView}>
-        {/* <StatusBar
-          animated={true}
-          backgroundColor="transparent"
-          translucent={true}
-          //barStyle={state.statusBarstyle}
-          //showHideTransition={statusBarTransition}
-          hidden={false}
-          style="dark"
-        /> */}
         <FlashMessage position="bottom" />
         <AppStack state={state} dispatch={dispatch} />
       </View>
+      </SocketProvider>
     </ErrorBoundary>
   );
 }

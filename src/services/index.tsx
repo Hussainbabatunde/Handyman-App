@@ -138,3 +138,12 @@ export const submitKycApi = async (token: any, values: object) => {
   });
   return data;
 }
+
+export const recentBookingsApi = async (token: any) => {
+  const { data } = await axios.get(`bookings/artisan/recent`, {
+    headers: {
+      "Authorization":"Bearer " + token
+    }
+  });
+  return data;
+}

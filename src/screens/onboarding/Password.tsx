@@ -130,6 +130,7 @@ navigation.navigate("OnboardStackScreen", {
           <View style={{ flexDirection: "row", gap: 10 }}>
       {[...Array(pinsize).keys()].map((i) => {
         const digit = code[i]; // get the digit at index i
+        
         return (
           <TextMedium
             key={i.toString()}

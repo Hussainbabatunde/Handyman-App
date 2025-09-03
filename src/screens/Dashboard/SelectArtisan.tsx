@@ -21,7 +21,7 @@ export default function SelectArtisan() {
     const navigation = useNavigation<StackNavigationProp<any>>();
 
     const { isSubmitting, getArtisanByProfessionApiCall, allArtisanByProfession, createBookingApiCall } = useContext<any>(DashboardContext)
-    // console.log("all artisans profession: ", allArtisanByProfession);
+    console.log("all artisans profession: ", allArtisanByProfession);
 
 
 
@@ -72,7 +72,7 @@ export default function SelectArtisan() {
                             contentContainerStyle={{ paddingVertical: 10 }}
                             renderItem={({ item }) => (
                                 <Pressable onPress={() => handleSubmit(item)} style={styles.artisanView}>
-                                    <Image source={{ uri: item?.profileImg ?? "https://runnershive.s3.eu-west-1.amazonaws.com/Portrait_Placeholder-lnhuBpImRh.png" }} style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 50 }} />
+                                    <Image source={{ uri: item?.profileImg ? item?.profileImg : "https://runnershive.s3.eu-west-1.amazonaws.com/Portrait_Placeholder-lnhuBpImRh.png" }} style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 50 }} />
                                     <View style={{ marginLeft: 12 }}>
                                         <TextSemiBold style={styles.nameTag}>{capitalize(item?.firstName)} {capitalize(item?.lastName)}</TextSemiBold>
                                         <TextRegular style={styles.smallerText}>

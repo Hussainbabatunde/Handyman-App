@@ -132,6 +132,7 @@ const ConfirmPassword = () => {
                     <View style={{ flexDirection: "row", gap: 10 }}>
                 {[...Array(pinsize).keys()].map((i) => {
                   const digit = code[i]; // get the digit at index i
+        console.log("digit: ", digit);
                   return (
                     <TextMedium
                       key={i.toString()}

@@ -73,7 +73,7 @@ const ArtisanDetails = () => {
                 </View>
                 <View style={{ justifyContent: "center", alignItems: "center", marginTop: 40 }}>
                     {artisanDetail?.profileImg ?
-                        <Image source={{ uri: artisanDetail?.profileImg ?? "https://runnershive.s3.eu-west-1.amazonaws.com/Portrait_Placeholder-lnhuBpImRh.png" }} style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 50 }} />
+                        <Image source={{ uri: artisanDetail?.profileImg ? artisanDetail?.profileImg : "https://runnershive.s3.eu-west-1.amazonaws.com/Portrait_Placeholder-lnhuBpImRh.png" }} style={{ width: 80, height: 80, objectFit: "cover", borderRadius: 50 }} />
                         :
                         <View style={{ backgroundColor: "#D9D9D980", paddingHorizontal: 26, paddingVertical: 24, borderRadius: 50, position: "relative" }}>
                             <Ionicons name="person-outline" size={32} color="#FA4E61" />

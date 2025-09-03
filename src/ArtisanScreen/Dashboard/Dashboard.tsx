@@ -1,5 +1,5 @@
-import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
-import React, { useContext } from 'react'
+import { ActivityIndicator, Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import React, { useContext, useEffect } from 'react'
 import Avatar from "../../../assets/images/avatar.png"
 import { TextMedium, TextRegular, TextSemiBold } from '../../component/StyledText'
 import { Feather, Octicons } from '@expo/vector-icons'
@@ -18,13 +18,20 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import AppContext from '../../context'
 import { DashboardContext } from './DashboardStack'
 import { capitalize, getStatusColor } from '../../context/actions/utils'
+import moment from 'moment'
 
 const Dashboard = () => {
   const { dispatch, logoutUser, removeUserData, userData, jobTypes } =
     React.useContext<any>(AppContext);
-    const {isSubmitting, getArtisanByProfessionApiCall, allArtisanByProfession} = useContext<any>(DashboardContext)
-    // console.log("userData: ", userData);
+    const {isSubmitting, recentBookingDetailsApiCall, allArtisanByProfession, recentBookingsDetailsRes} = useContext<any>(DashboardContext)
+    // console.log("recentBookingsDetailsRes: ", recentBookingsDetailsRes);
     
+    useEffect(()=>{
+      const initiate = async () =>{
+        await recentBookingDetailsApiCall()
+      }
+      initiate()
+    },[])
   const navigation = useNavigation<StackNavigationProp<any>>();
     const activity = [
         {
@@ -68,6 +75,12 @@ const Dashboard = () => {
 
   return (
     <View style={styles.container}>
+      {isSubmitting?.recentBookings ?
+                            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "white" }}>
+                                {/* <StatusBar backgroundColor="#fff" translucent /> */}
+                                <ActivityIndicator size="small" color="black" />
+                            </View>
+                            :
         <SafeAreaView style={styles.container}>
             <View style={[styles.container, {paddingHorizontal: 21}]}>
       <View style={styles.nameNotifyView}>
@@ -92,7 +105,7 @@ const Dashboard = () => {
         </View>
         <View style={{backgroundColor: "black", paddingLeft: 18, paddingTop: 133, paddingBottom: 33, width: 155, borderRadius: 10, position: "relative"}}>
           <TextRegular style={{color: "white", fontSize: 12}}>Total Jobs Completed</TextRegular>
-          <TextSemiBold style={{color: "white", fontSize: 28}}>25</TextSemiBold>
+          <TextSemiBold style={{color: "white", fontSize: 28}}>{recentBookingsDetailsRes?.bookingsCount}</TextSemiBold>
         </View>
       </View>
 
@@ -103,7 +116,7 @@ const Dashboard = () => {
         </Pressable>
       </View>
 
-      <Pressable
+      {recentBookingsDetailsRes?.data?.map((each: any, index: number)=> <Pressable
           // onPress={() =>
           //           navigation.navigate("TabNavigation", {
           //             screen: "BookingsNavigation",
@@ -122,6 +135,7 @@ const Dashboard = () => {
               flexDirection: "row",
               alignItems: "center",
             }}
+            key={index}
           >
             {/* Left icon */}
             <View
@@ -140,18 +154,16 @@ const Dashboard = () => {
             {/* Task details */}
             <View style={{ marginLeft: 13 }}>
               <Text style={{ color: "#696969", fontSize: 11, marginBottom: 3 }}>
-                {/* {moment(item?.scheduledAt).format("DD MMMM . hh:mm a")} */} 10 December . 10:00 am
+                {moment(each?.scheduledAt).format("DD MMMM . hh:mm a")}
               </Text>
-              {/* <Text style={{ fontSize: 14, color: "black" }}>{capitalize(item?.artisan?.firstName)} {capitalize(item?.artisan?.lastName)}</Text> */}
-
-              <Text style={{ fontSize: 14, color: "black" }}>babatunde H</Text>
-              <Text style={{ fontSize: 14, color: "black" }}>Lagos nigera</Text>
+              <Text style={{ fontSize: 14, color: "black" }}>{capitalize(each?.requester?.firstName)} {capitalize(each?.requester?.lastName)}</Text>
+              <Text style={{ fontSize: 14, color: "black" }}>{each?.location}</Text>
       
               <View style={{ alignItems: "flex-start" }}>
                 <View
                   style={{
                     // backgroundColor: getStatusColor(item?.status, item?.artisanStatus),
-                    backgroundColor: getStatusColor("pending", "completed"),
+                    backgroundColor: getStatusColor(each?.status, each?.artisanStatus),
                     borderRadius: 4,
                     paddingHorizontal: 9,
                     paddingVertical: 4,
@@ -159,15 +171,16 @@ const Dashboard = () => {
                   }}
                 >
                   <Text style={{ color: "white", fontSize: 11 }}>
-                    {/* Task {(item?.status == "accepted" && item?.artisanStatus != "pending") ? capitalize(item?.artisanStatus) : capitalize(item?.status)} */}
-                    Task Ongoing
+                    Task {(each?.status == "accepted" && each?.artisanStatus != "pending") ? capitalize(each?.artisanStatus) : capitalize(each?.status)}
+                    {/* Task Ongoing */}
                   </Text>
                 </View>
               </View>
             </View>
-          </Pressable>
+          </Pressable>)}
       </View>
       </SafeAreaView>
+}
     </View>
   )
 }

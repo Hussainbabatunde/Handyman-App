@@ -1,4 +1,4 @@
-import { AntDesign, Entypo, Feather, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, Entypo, Feather, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useEffect, useState } from "react"
@@ -160,6 +160,26 @@ const initiate = async () =>{
                                 </View>
                             </View>
                         </Pressable>
+                        <View style={{flexDirection: "row", justifyContent: "space-between", marginTop: 20}}>
+                            <Pressable style={{flexDirection: "row", alignItems: "center"}}>
+                                <FontAwesome name="phone" size={24} color="black" />
+                                <TextRegular style={{marginLeft: 10}}>Phone call</TextRegular>
+                            </Pressable>
+                            <Pressable onPress={() =>
+              navigation.navigate("TabNavigation", {
+                screen: "BookingsNavigation",
+                params: {
+                  screen: "ChatInterface",
+                  params: {
+          otherUser: bookingDetailsInfo?.artisan
+        }
+                },
+              })
+            } style={{flexDirection: "row", alignItems: "center"}}>
+                                <Ionicons name="chatbox-ellipses-outline" size={24} color="black" />
+                                <TextRegular style={{marginLeft: 10}}>Chat</TextRegular>
+                            </Pressable>
+                        </View>
                         </View>
                         {(bookingDetailsInfo?.status == "accepted" && bookingDetailsInfo?.artisanStatus != "completed") && <View style={{ width: "100%" }}>
                         <AuthSubmitButton handleSubmit={()=> setCloseJob(true)} marginTOP={38} confirm={true} loading={isSubmitting?.completeBooking} title={"Close Job"} buttonColor="black" loadColor="black" textColor={"white"} />

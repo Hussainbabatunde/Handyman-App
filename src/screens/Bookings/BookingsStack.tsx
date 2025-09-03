@@ -13,10 +13,11 @@ import React, {createContext, useContext, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppContext from '../../../src/context';
 import Bookings from './Bookings';
-import { completeBookingApi, getAllBookingsApi, getBookingDetailsApi } from '../../services';
+import { completeBookingApi, getAllBookingsApi, getBookingDetailsApi, recentBookingsApi } from '../../services';
 import { Booking } from '../../services/ApiTypes';
 import BookingDetailsPage from './BookingDetailsPage';
 import { commonActions } from '../../context/actions';
+import ChatInterface from './ChatInterface';
 
 const Stack = createStackNavigator();
 
@@ -28,7 +29,8 @@ const BookingsNavigation = ({navigation, route}: any) => {
   const [isSubmitting, setIsSubmitting] = useState({
     allBookings: false,
     completeBooking: false,
-    bookingDetails: false
+    bookingDetails: false,
+    recentBookings: false
   })
   const [allBookingRes, setAllBookingRes] = useState<Booking | null>(null)
   const [completeBookingRes, setCompleteBookingRes] = useState<any>(null)
@@ -108,6 +110,8 @@ const getAllBookingsApiCall = async (key: string) => {
       setIsSubmitting((prev) => ({...prev, bookingDetails: false})));
     };
 
+    
+
 
   return (
     <BookingsContext.Provider
@@ -119,7 +123,7 @@ const getAllBookingsApiCall = async (key: string) => {
         completeBookingApiCall,
         setCompleteBookingRes,
         bookingDetailsRes,
-        getBookingDetailsApiCall
+        getBookingDetailsApiCall,
       }}>
       <Stack.Navigator screenOptions={{
     headerShown: false,
@@ -134,6 +138,11 @@ const getAllBookingsApiCall = async (key: string) => {
         <Stack.Screen
           name="BookingDetailsPage"
           component={BookingDetailsPage}
+          options={{headerShown: false, gestureEnabled: false}}
+        />
+        <Stack.Screen
+          name="ChatInterface"
+          component={ChatInterface}
           options={{headerShown: false, gestureEnabled: false}}
         />
       </Stack.Navigator>
