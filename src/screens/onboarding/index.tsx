@@ -24,6 +24,7 @@ import UncompletedGetStarted from "./UncompletedGetStarted";
 import ContactAddress from "./ContactAddress";
 import CompleteKyc from "./CompleteKyc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import GuarantorDetails from "./GuarantorDetails";
 
 export const OnboardContext = createContext<PropsAppContext>({});
 const OnboardStack = createStackNavigator();
@@ -67,6 +68,11 @@ export default function OnboardStackScreen() {
   const [passportPhotograph, setPassportPhotograph] = useState<string | null>(null)
   const [meansOfIdentification, setMeansOfIdentification] = useState<string | null>(null)
   const [address, setAddress] = useState<string | null>(null)
+  const [guarantorDetails, setGuarantorDetails] = useState({
+    guarantorFirstName: "",
+    guarantorLastName: "",
+    guarantorPhoneNumber: ""
+  })
   const [documentUpload, setDocumentUpload] = useState<any>([])
   const [loginRes, setLoginRes] = useState<any>(null)
 
@@ -248,7 +254,7 @@ const verifyPhoneApiCall = async (value: verifyType) => {
         );
       } else {
         // add new one
-        return [...prevDocs, data];
+        return [...prevDocs, {name: data?.name, document: data?.url}];
       }
     });
           // setUploadedImage(data?.data)
@@ -266,7 +272,7 @@ const verifyPhoneApiCall = async (value: verifyType) => {
     
     setIsSubmitting((prev) => ({...prev, uploadingMOI: true}));
     let dataSubmitted = {
-      documents: [...documentUpload, {name: "address", document: address}]
+      documents: [...documentUpload, {name: "address", document: address}, {name: "guarantorFirstName", document: guarantorDetails?.guarantorFirstName}, {name: "guarantorLastName", document: guarantorDetails?.guarantorLastName}, {name: "guarantorPhoneNumber", document: guarantorDetails?.guarantorPhoneNumber}]
     }
     
       let userToken = await AsyncStorage.getItem("userToken");
@@ -315,7 +321,9 @@ const verifyPhoneApiCall = async (value: verifyType) => {
         setAddress,
         address,
         documentUpload,
-        SubmitKycApiCall
+        SubmitKycApiCall,
+        guarantorDetails, 
+        setGuarantorDetails
       }}
     >
       <OnboardStack.Navigator
@@ -344,6 +352,11 @@ const verifyPhoneApiCall = async (value: verifyType) => {
         <OnboardStack.Screen
           name="ContactAddress"
           component={ContactAddress}
+          options={{headerShown: false, gestureEnabled: false}}
+        />
+        <OnboardStack.Screen
+          name="GuarantorDetails"
+          component={GuarantorDetails}
           options={{headerShown: false, gestureEnabled: false}}
         />
         <OnboardStack.Screen

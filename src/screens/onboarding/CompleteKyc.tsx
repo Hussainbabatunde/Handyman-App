@@ -2,7 +2,7 @@ import { Alert, Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'r
 import React, { useContext, useState } from 'react'
 import Avatar from "../../../assets/images/avatar.png"
 import { TextBold, TextMedium, TextRegular, TextSemiBold } from '../../component/StyledText'
-import { AntDesign, EvilIcons, Feather, Ionicons, MaterialCommunityIcons, Octicons } from '@expo/vector-icons'
+import { AntDesign, EvilIcons, Feather, FontAwesome5, Ionicons, MaterialCommunityIcons, Octicons } from '@expo/vector-icons'
 import { TextInput } from 'react-native-gesture-handler'
 import * as DocumentPicker from 'expo-document-picker';
 import { useNavigation } from '@react-navigation/native'
@@ -17,8 +17,13 @@ const CompleteKyc = () => {
         React.useContext<any>(AppContext);
     const [imgSize, setImgSize] = useState<number | null>(null)
     const [fileUploading, setFileUploading] = useState<any>(null)
-    const {UploadDocmentApi, documentUpload, passportPhotograph, meansOfIdentification, address, isSubmitting, SubmitKycApiCall} = useContext<any>(OnboardContext)
-    // console.log("userData: ", userData);
+    const {UploadDocmentApi, documentUpload, passportPhotograph, meansOfIdentification, address, isSubmitting, SubmitKycApiCall, guarantorDetails} = useContext<any>(OnboardContext)
+    // console.log("userData: ", documentUpload);
+
+    const isGuarantorFilled =
+  guarantorDetails.guarantorFirstName.trim() !== "" &&
+  guarantorDetails.guarantorLastName.trim() !== "" &&
+  guarantorDetails.guarantorPhoneNumber.trim() !== "";
 
     const navigation = useNavigation<StackNavigationProp<any>>();
     const selectDoc = async () => {
@@ -138,6 +143,59 @@ const CompleteKyc = () => {
                         </View>
                             <AntDesign name="arrowright" size={24} color={address? "#FA4E61" :"#696969"} />
                     </Pressable>
+                    <Pressable
+  onPress={() => {
+    navigation.navigate("OnboardStackScreen", {
+      screen: "GuarantorDetails",
+    });
+  }}
+  style={[
+    styles.rowView,
+    { borderColor: isGuarantorFilled ? "#FA4E61" : "#696969" },
+  ]}
+>
+  <View
+    style={{
+      backgroundColor: isGuarantorFilled ? "#FA4E6133" : "#D9D9D980",
+      paddingHorizontal: 10,
+      paddingVertical: 10,
+      borderRadius: 50,
+      position: "relative",
+    }}
+  >
+    <FontAwesome5
+      name="list-alt"
+      size={20}
+      color={isGuarantorFilled ? "#FA4E61" : "#696969"}
+    />
+  </View>
+
+  <View style={styles.rowDesc}>
+    <TextSemiBold
+      style={[
+        styles.topicView,
+        { color: isGuarantorFilled ? "#FA4E61" : "#696969" },
+      ]}
+    >
+      Guarantor details
+    </TextSemiBold>
+    <TextRegular
+      style={{
+        color: isGuarantorFilled ? "#FA4E61" : "#696969",
+        fontSize: 12,
+      }}
+    >
+      Lorem ipsum dolor sit, adipiscing elit adipiscing.
+    </TextRegular>
+  </View>
+
+  <AntDesign
+    name="arrowright"
+    size={24}
+    color={isGuarantorFilled ? "#FA4E61" : "#696969"}
+  />
+</Pressable>
+
 
                     <View style={{justifyContent: "center", alignItems: "center"}}>
                         {(passportPhotograph && meansOfIdentification && address) && <Pressable onPress={async () =>{
