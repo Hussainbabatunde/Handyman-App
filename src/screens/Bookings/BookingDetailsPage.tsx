@@ -1,4 +1,4 @@
-import { AntDesign, Entypo, Feather, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, Entypo, Feather, FontAwesome, Fontisto, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useEffect, useState } from "react"
@@ -16,6 +16,7 @@ import { capitalize, getStatusColor } from "../../context/actions/utils";
 import ModalCloseJob from "../../component/modals/ModalCloseJob";
 import ModalLoading from "../../component/modals/ModalLoading";
 import { BookingsContext } from "./BookingsStack";
+import * as Calendar from 'expo-calendar';
 
 export default function BookingDetailsPage() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -29,20 +30,109 @@ export default function BookingDetailsPage() {
     const [loading, setLoading] = useState(false)
     const isFocused = useIsFocused();
 
+    useEffect(() => {
+    (async () => {
+      const { status } = await Calendar.requestCalendarPermissionsAsync();
+      if (status === 'granted') {
+        const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+        console.log('Here are all your calendars:');
+        console.log({ calendars });
+      }
+    })();
+  }, []);
+    
+
 const initiate = async () =>{
             await getBookingDetailsApiCall(details?.id)
         }
+
+async function getDefaultCalendarSource() {
+  const defaultCalendar = await Calendar.getDefaultCalendarAsync();
+  return defaultCalendar.source;
+}
+
+const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+const handleSetAppointment = async () => {
+  const dateStr = bookingDetailsInfo?.scheduledAt;
+  const timeStr = bookingDetailsInfo?.scheduledAt;
+  
+
+  // Extract the full combined DateTime
+  const combinedDateTime = new Date(dateStr);
+
+  // End time (1 hour after start)
+  const endDateTime = new Date(combinedDateTime.getTime() + 1000 * 60 * 60);
+
+  // Get calendar source
+  const defaultCalendarSource =
+    Platform.OS === "ios"
+      ? await getDefaultCalendarSource()
+      : { isLocalAccount: true, name: "Expo Calendar" };
+
+  const newCalendarID = await Calendar.createCalendarAsync({
+    title: "Expo Calendar",
+    color: "blue",
+    entityType: Calendar.EntityTypes.EVENT,
+    sourceId: defaultCalendarSource.id,
+    source: defaultCalendarSource,
+    name: "internalCalendarName",
+    ownerAccount: "personal",
+    timeZone: userTimeZone,
+    accessLevel: Calendar.CalendarAccessLevel.OWNER,
+  });
+
+  // Get all calendars and find target Google calendar (if any)
+  const calendars = await Calendar.getCalendarsAsync();
+  const writableGoogleCalendars = calendars.filter(
+    (cal) => cal.allowsModifications && cal.isSynced && cal.accessLevel === "owner"
+  );
+  const targetCalendarId = writableGoogleCalendars[0]?.id || newCalendarID;
+
+  // 🔍 Check if event already exists in the target calendar
+  const existingEvents = await Calendar.getEventsAsync(
+    [targetCalendarId],
+    new Date(combinedDateTime.getTime() - 5 * 60 * 1000), // 5 mins before
+    new Date(endDateTime.getTime() + 5 * 60 * 1000)      // 5 mins after
+  );
+
+  const alreadyExists = existingEvents.some(
+    (event) =>
+      event.title ===
+        `Meeting with ${bookingDetailsInfo?.requester?.firstName} ${bookingDetailsInfo?.requester?.lastName}` &&
+      new Date(event.startDate).getTime() === combinedDateTime.getTime()
+  );
+
+  if (alreadyExists) {
+    console.log("⏩ Event already exists, skipping creation.");
+    return;
+  }
+
+  // ✅ Create event if it doesn't exist
+  await Calendar.createEventAsync(targetCalendarId, {
+    title: `Meeting with ${bookingDetailsInfo?.requester?.firstName} ${bookingDetailsInfo?.requester?.lastName}`,
+    startDate: combinedDateTime,
+    endDate: endDateTime,
+    alarms: [{ relativeOffset: -30 }],
+    timeZone: userTimeZone,
+    location: `${bookingDetailsInfo?.location}`,
+  });
+
+  console.log("✅ Event created in calendar");
+};
+
+useEffect(()=>{
+    if(bookingDetailsInfo?.status == "accepted" && bookingDetailsInfo?.artisanStatus != "completed"){
+        handleSetAppointment()
+    }
+}, [bookingDetailsInfo])
+
+
     useEffect(()=>{
-        // setLoading(true)
-        // setBookingDetailsInfo(details)
-        // setLoading(false)
         initiate()
     },[])
 
     useEffect(()=>{
-        // setLoading(true)
-        // setBookingDetailsInfo(details)
-        // setLoading(false)
          const calling = async () =>{
         initiate()
         await getAllBookingsApiCall()
@@ -73,7 +163,9 @@ const initiate = async () =>{
         let sentData = {
             artisanId: details?.artisan?.id,
             rating: rating,
-            narration: narration
+            narration: narration,
+            type: "artisan",
+            clientId: null
         }
         setCloseJob(false)
         await completeBookingApiCall(details?.id, sentData)
@@ -143,7 +235,14 @@ const initiate = async () =>{
                         </View>
                     </View>
                     <View style={[styles.locationView, {marginTop: 0, borderTopWidth: 0}]}>
-                        <Entypo name="location-pin" size={24} color="#979797" />
+                        <MaterialIcons name="verified-user" size={24} color="#979797" />
+                        <View style={styles.detailsLocationView}>
+                            <TextSemiBold style={styles.mainText}>Verification Code</TextSemiBold>
+                            <TextMedium style={[styles.subText, {color: "black"}]}>{bookingDetailsInfo?.otp}</TextMedium>
+                        </View>
+                    </View>
+                    <View style={[styles.locationView, {marginTop: 0, borderTopWidth: 0}]}>
+                        <Fontisto name="date" size={24} color="#979797" />
                         <View style={styles.detailsLocationView}>
                             <TextSemiBold style={styles.mainText}>{moment(bookingDetailsInfo?.scheduledAt).format("dddd, MMMM Do, YYYY")}</TextSemiBold>
                             <TextRegular style={styles.subText}>start from <TextMedium style={{color: "black", fontSize: 16}}>{moment(bookingDetailsInfo?.scheduledAt).format('hh:mm A')}</TextMedium></TextRegular>
@@ -186,7 +285,7 @@ const initiate = async () =>{
                     </View>}
                 </View>
 }
-                <ModalCloseJob verify={closeJob} setVerify={setCloseJob} handleSubmit={handleSubmit} firstName={bookingDetailsInfo?.artisan?.firstName} lastName={bookingDetailsInfo?.artisan?.lastName} handlePress={handlePress} rating={rating} setNarration={setNarration} />
+                <ModalCloseJob verify={closeJob} setVerify={setCloseJob} handleSubmit={handleSubmit} firstName={bookingDetailsInfo?.artisan?.firstName} lastName={bookingDetailsInfo?.artisan?.lastName} handlePress={handlePress} rating={rating} setNarration={setNarration} bookingDetails={bookingDetailsInfo} />
                     {/* <ModalLoading verify={isSubmitting?.completeBooking} /> */}
             </KeyboardAvoidingView>
         </SafeAreaView>

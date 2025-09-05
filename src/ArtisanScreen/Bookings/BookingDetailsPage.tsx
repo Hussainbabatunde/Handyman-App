@@ -1,4 +1,4 @@
-import { AntDesign, Entypo, Feather, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, Entypo, Feather, FontAwesome, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useEffect, useState } from "react"
@@ -17,6 +17,8 @@ import ModalCloseJob from "../../component/modals/ModalCloseJob";
 import ModalLoading from "../../component/modals/ModalLoading";
 import { BookingsContext } from "./BookingsStack";
 import StarRating from "../../component/StarRating";
+import OtpModal from "../../component/modals/ModalAcceptJobOtp";
+import * as Calendar from 'expo-calendar';
 
 export default function BookingDetailsPage() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -29,16 +31,109 @@ export default function BookingDetailsPage() {
     const [bookingDetailsInfo, setBookingDetailsInfo] = useState<any>(null)
     const [loading, setLoading] = useState(false)
     const isFocused = useIsFocused();
+    const [otp, setOtp] = useState("");
+    const [showOtpModal, setShowOtpModal] = useState(false);
+    // console.log("booking detals: ", bookingDetailsInfo);
+
+    useEffect(() => {
+        (async () => {
+          const { status } = await Calendar.requestCalendarPermissionsAsync();
+          if (status === 'granted') {
+            const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+            console.log('Here are all your calendars:');
+            console.log({ calendars });
+          }
+        })();
+      }, []);
+    
 
 const initiate = async () =>{
             await getBookingDetailsApiCall(details?.id)
         }
     useEffect(()=>{
-        // setLoading(true)
-        // setBookingDetailsInfo(details)
-        // setLoading(false)
         initiate()
     },[])
+
+    async function getDefaultCalendarSource() {
+      const defaultCalendar = await Calendar.getDefaultCalendarAsync();
+      return defaultCalendar.source;
+    }
+    
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    
+    const handleSetAppointment = async () => {
+      const dateStr = bookingDetailsInfo?.scheduledAt;
+      const timeStr = bookingDetailsInfo?.scheduledAt;
+      
+    
+      // Extract the full combined DateTime
+      const combinedDateTime = new Date(dateStr);
+    
+      // End time (1 hour after start)
+      const endDateTime = new Date(combinedDateTime.getTime() + 1000 * 60 * 60);
+    
+      // Get calendar source
+      const defaultCalendarSource =
+        Platform.OS === "ios"
+          ? await getDefaultCalendarSource()
+          : { isLocalAccount: true, name: "Expo Calendar" };
+    
+      const newCalendarID = await Calendar.createCalendarAsync({
+        title: "Expo Calendar",
+        color: "blue",
+        entityType: Calendar.EntityTypes.EVENT,
+        sourceId: defaultCalendarSource.id,
+        source: defaultCalendarSource,
+        name: "internalCalendarName",
+        ownerAccount: "personal",
+        timeZone: userTimeZone,
+        accessLevel: Calendar.CalendarAccessLevel.OWNER,
+      });
+    
+      // Get all calendars and find target Google calendar (if any)
+      const calendars = await Calendar.getCalendarsAsync();
+      const writableGoogleCalendars = calendars.filter(
+        (cal) => cal.allowsModifications && cal.isSynced && cal.accessLevel === "owner"
+      );
+      const targetCalendarId = writableGoogleCalendars[0]?.id || newCalendarID;
+    
+      // 🔍 Check if event already exists in the target calendar
+      const existingEvents = await Calendar.getEventsAsync(
+        [targetCalendarId],
+        new Date(combinedDateTime.getTime() - 5 * 60 * 1000), // 5 mins before
+        new Date(endDateTime.getTime() + 5 * 60 * 1000)      // 5 mins after
+      );
+    
+      const alreadyExists = existingEvents.some(
+        (event) =>
+          event.title ===
+            `Meeting with ${bookingDetailsInfo?.requester?.firstName} ${bookingDetailsInfo?.requester?.lastName}` &&
+          new Date(event.startDate).getTime() === combinedDateTime.getTime()
+      );
+    
+      if (alreadyExists) {
+        console.log("⏩ Event already exists, skipping creation.");
+        return;
+      }
+    
+      // ✅ Create event if it doesn't exist
+      await Calendar.createEventAsync(targetCalendarId, {
+        title: `Meeting with ${bookingDetailsInfo?.requester?.firstName} ${bookingDetailsInfo?.requester?.lastName}`,
+        startDate: combinedDateTime,
+        endDate: endDateTime,
+        alarms: [{ relativeOffset: -30 }],
+        timeZone: userTimeZone,
+        location: `${bookingDetailsInfo?.location}`,
+      });
+    
+      console.log("✅ Event created in calendar");
+    };
+    
+    useEffect(()=>{
+        if(bookingDetailsInfo?.status == "accepted" && bookingDetailsInfo?.artisanStatus != "completed"){
+            handleSetAppointment()
+        }
+    }, [bookingDetailsInfo])
 
     useEffect(()=>{
         // setLoading(true)
@@ -68,14 +163,27 @@ const handleAcceptJob = async () =>{
 }
 
 const handleStartJob = async () =>{
+
+    setShowOtpModal(true)
+    
+    // await updateBookingDetailsApiCall(details?.id, sentData)
+    //     await getAllBookingsApiCall()
+}
+
+const handleOtpSubmit = async (code: string) => {
+    console.log("Entered OTP:", code);
+    // 👉 verify OTP with backend
+    setShowOtpModal(false);
     let sentData = {
         status: "accepted",
-        artisanStatus: "ongoing"
+        artisanStatus: "ongoing",
+        otp: code
     }
-    
+
+await new Promise((resolve) => setTimeout(resolve, 1000));
     await updateBookingDetailsApiCall(details?.id, sentData)
         await getAllBookingsApiCall()
-}
+  };
 
 
   const handlePress = (index: number) => {
@@ -84,9 +192,11 @@ const handleStartJob = async () =>{
     // console.log("details: ", completeBookingRes);
     const handleSubmit = async () => {
         let sentData = {
-            artisanId: details?.artisan?.id,
+            clientId: details?.requester?.id,
             rating: rating,
-            narration: narration
+            narration: narration,
+            type: "client",
+            artisanId: null
         }
         setCloseJob(false)
         await completeBookingApiCall(details?.id, sentData)
@@ -163,6 +273,26 @@ const handleStartJob = async () =>{
                                 <StarRating rating={bookingDetailsInfo?.requester?.stars} />
                             </View>
                         </Pressable>
+                        <View style={{flexDirection: "row", justifyContent: "space-between", marginTop: 20}}>
+                            <Pressable style={{flexDirection: "row", alignItems: "center"}}>
+                                <FontAwesome name="phone" size={24} color="black" />
+                                <TextRegular style={{marginLeft: 10}}>Phone call</TextRegular>
+                            </Pressable>
+                            <Pressable onPress={() =>
+              navigation.navigate("ArtisanTabNavigation", {
+                screen: "BookingsNavigation",
+                params: {
+                  screen: "ChatInterface",
+                  params: {
+          otherUser: bookingDetailsInfo?.requester
+        }
+                },
+              })
+            } style={{flexDirection: "row", alignItems: "center"}}>
+                                <Ionicons name="chatbox-ellipses-outline" size={24} color="black" />
+                                <TextRegular style={{marginLeft: 10}}>Chat</TextRegular>
+                            </Pressable>
+                        </View>
                         </View>
                         {(bookingDetailsInfo?.status == "pending" && bookingDetailsInfo?.artisanStatus != "completed") ? 
                         <View style={{ width: "100%" }}>
@@ -190,7 +320,14 @@ const handleStartJob = async () =>{
                     }
                 </View>
 }
-                <ModalCloseJob verify={closeJob} setVerify={setCloseJob} handleSubmit={handleSubmit} firstName={bookingDetailsInfo?.requester?.firstName} lastName={bookingDetailsInfo?.requester?.lastName} handlePress={handlePress} rating={rating} setNarration={setNarration} />
+                <ModalCloseJob verify={closeJob} setVerify={setCloseJob} handleSubmit={handleSubmit} firstName={bookingDetailsInfo?.requester?.firstName} lastName={bookingDetailsInfo?.requester?.lastName} handlePress={handlePress} rating={rating} setNarration={setNarration} bookingDetails={bookingDetailsInfo} />
+                <OtpModal
+        visible={showOtpModal}
+        onClose={() => setShowOtpModal(false)}
+        onSubmit={handleOtpSubmit}
+        otp={otp}
+        setOtp={setOtp}
+      />
                     {/* <ModalLoading verify={isSubmitting?.completeBooking} /> */}
             </KeyboardAvoidingView>
         </SafeAreaView>

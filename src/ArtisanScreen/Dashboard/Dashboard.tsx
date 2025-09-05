@@ -100,12 +100,12 @@ const Dashboard = () => {
         <View style={{backgroundColor: "#E13548", paddingLeft: 18, paddingTop: 133, paddingBottom: 33, width: 155, borderRadius: 10, position: "relative"}}>
           <Image source={outerTransparent} style={{position: "absolute", top: 0, width: 150, objectFit: "contain", zIndex: 10}} />
           <Image source={innerTransparent} style={{position: "absolute", top: 0, width: 100, objectFit: "contain", zIndex: 100}} />
-          <TextRegular style={{color: "white", fontSize: 12}}>Total Income</TextRegular>
-          <TextSemiBold style={{color: "white", fontSize: 28}}>₦16.4M</TextSemiBold>
+          <TextRegular style={{color: "white", fontSize: 12}}>Total Jobs Pending</TextRegular>
+          <TextSemiBold style={{color: "white", fontSize: 28}}>{recentBookingsDetailsRes?.bookingsCountPending}</TextSemiBold>
         </View>
         <View style={{backgroundColor: "black", paddingLeft: 18, paddingTop: 133, paddingBottom: 33, width: 155, borderRadius: 10, position: "relative"}}>
           <TextRegular style={{color: "white", fontSize: 12}}>Total Jobs Completed</TextRegular>
-          <TextSemiBold style={{color: "white", fontSize: 28}}>{recentBookingsDetailsRes?.bookingsCount}</TextSemiBold>
+          <TextSemiBold style={{color: "white", fontSize: 28}}>{recentBookingsDetailsRes?.bookingsCountCompleted}</TextSemiBold>
         </View>
       </View>
 

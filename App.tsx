@@ -334,6 +334,8 @@ function App(): React.JSX.Element {
     );
   };
 
+  let serverUrl = Platform.OS == "ios" ? "http://localhost:3001" : "http://10.0.2.2:3001"
+
   return (
     // <NavigationContainer>
     //   <Stack.Navigator>
@@ -341,7 +343,7 @@ function App(): React.JSX.Element {
     //   </Stack.Navigator>
     // </NavigationContainer>
     <ErrorBoundary FallbackComponent={CustomFallback}>
-      <SocketProvider serverUrl="http://localhost:3001">
+      <SocketProvider serverUrl={serverUrl}>
       <View style={styles.container} onLayout={onLayoutRootView}>
         <FlashMessage position="bottom" />
         <AppStack state={state} dispatch={dispatch} />

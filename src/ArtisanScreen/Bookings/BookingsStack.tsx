@@ -17,6 +17,7 @@ import { completeBookingApi, getAllArtisanBookingsApi, getAllBookingsApi, getBoo
 import { Booking } from '../../services/ApiTypes';
 import BookingDetailsPage from './BookingDetailsPage';
 import { commonActions } from '../../context/actions';
+import ChatInterface from './ChatInterface';
 
 const Stack = createStackNavigator();
 
@@ -159,6 +160,11 @@ const getAllBookingsApiCall = async (key: string) => {
         <Stack.Screen
           name="BookingDetailsPage"
           component={BookingDetailsPage}
+          options={{headerShown: false, gestureEnabled: false}}
+        />
+        <Stack.Screen
+          name="ChatInterface"
+          component={ChatInterface}
           options={{headerShown: false, gestureEnabled: false}}
         />
       </Stack.Navigator>

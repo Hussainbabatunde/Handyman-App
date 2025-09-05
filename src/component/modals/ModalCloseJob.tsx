@@ -18,6 +18,7 @@ interface ModalPolicyTypeProps {
   rating: number;
   handlePress: any;
   setNarration: any;
+  bookingDetails: any
 }
 
 const ModalCloseJob: React.FC<ModalPolicyTypeProps> = ({
@@ -28,7 +29,8 @@ const ModalCloseJob: React.FC<ModalPolicyTypeProps> = ({
   lastName,
   rating,
   handlePress,
-  setNarration
+  setNarration,
+  bookingDetails
 }) => {
   const amount = 50;
   const { height } = Dimensions.get("window");
@@ -64,9 +66,9 @@ const ModalCloseJob: React.FC<ModalPolicyTypeProps> = ({
           </Pressable>
         ))}
       </View>
-      <View style={styles.inputHolderNew}>
+      {!bookingDetails?.completeNarration && <View style={styles.inputHolderNew}>
                                       <TextInput multiline onChangeText={(text)=> setNarration(text)} placeholder="Drop a note..." style={[styles.dataInputed, { fontSize: 13, minHeight: 100 }]} />
-                                  </View>
+                                  </View>}
         <TextRegular style={{fontSize: 11, color: "#898A8D", marginTop: 11}}>Your review will not be shared with <TextSemiBold style={{fontSize: 11, color: "black"}}>{firstName} {lastName}</TextSemiBold></TextRegular>
 <View style={{marginBottom: 10}}>
                         <AuthSubmitButton handleSubmit={handleSubmit} marginTOP={35} confirm={true} loading={false} title={"Close Job"} buttonColor="#FA4E61" loadColor="black" textColor={"white"} />
