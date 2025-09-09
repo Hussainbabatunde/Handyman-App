@@ -2,7 +2,7 @@ import { AntDesign, Entypo, Feather, FontAwesome, Ionicons, MaterialCommunityIco
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useEffect, useState } from "react"
-import { ActivityIndicator, Image, KeyboardAvoidingView, Modal, Platform, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Modal, PermissionsAndroid, Platform, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import { splitIntoParagraphs } from "../../services/utils";
 import { TextBold, TextMedium, TextRegular, TextSemiBold } from "../../component/StyledText";
@@ -19,6 +19,9 @@ import { BookingsContext } from "./BookingsStack";
 import StarRating from "../../component/StarRating";
 import OtpModal from "../../component/modals/ModalAcceptJobOtp";
 import * as Calendar from 'expo-calendar';
+import { useSocket } from "../../component/SocketContext";
+import { useWebRTCCall } from "../../component/hooks/useWebRTCCall";
+import { CallModal } from "../../component/hooks/CallModal";
 
 export default function BookingDetailsPage() {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -31,9 +34,138 @@ export default function BookingDetailsPage() {
     const [bookingDetailsInfo, setBookingDetailsInfo] = useState<any>(null)
     const [loading, setLoading] = useState(false)
     const isFocused = useIsFocused();
+        const [callDuration, setCallDuration] = useState(0);
+        const [showCallModal, setShowCallModal] = useState(false);
+        const { isConnected } = useSocket();
     const [otp, setOtp] = useState("");
     const [showOtpModal, setShowOtpModal] = useState(false);
     // console.log("booking detals: ", bookingDetailsInfo);
+
+    const requestPermissions = async () => {
+  if (Platform.OS === 'android') {
+    try {
+      const granted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+      ]);
+      
+      if (
+        granted['android.permission.CAMERA'] === PermissionsAndroid.RESULTS.GRANTED &&
+        granted['android.permission.RECORD_AUDIO'] === PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        console.log('Permissions granted');
+      } else {
+        console.log('Permissions denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+};
+
+useEffect(() => {
+  requestPermissions();
+}, []);
+
+// Get current user info - replace with your actual user context
+    const currentUserId = 'your-user-id'; // Replace with actual user ID
+    const currentUserName = 'Your Name'; // Replace with actual user name
+
+    // WebRTC calling hook
+    const {
+        callState,
+        makeCall,
+        answerCall,
+        rejectCall,
+        endCall,
+        toggleMute,
+    } = useWebRTCCall({
+        userId: bookingDetailsInfo?.artisan?.id,
+        userName: bookingDetailsInfo?.artisan?.firstName,
+        onCallEnd: () => {
+            setShowCallModal(false);
+            setCallDuration(0);
+        },
+        onIncomingCall: (callerInfo) => {
+            setShowCallModal(true);
+        },
+    });
+
+    // Call duration timer
+    useEffect(() => {
+        let interval: NodeJS.Timeout;
+        if (callState.isInCall && callState.callConnected) {
+            interval = setInterval(() => {
+                setCallDuration(prev => prev + 1);
+            }, 1000);
+        } else {
+            setCallDuration(0);
+        }
+        return () => {
+            if (interval) clearInterval(interval);
+        };
+    }, [callState.isInCall, callState.callConnected]);
+
+    // Show/hide call modal based on call state
+    useEffect(() => {
+        if (callState.incomingCall || callState.isInCall) {
+            setShowCallModal(true);
+        } else if (!callState.incomingCall && !callState.isInCall) {
+            setShowCallModal(false);
+        }
+    }, [callState.incomingCall, callState.isInCall]);
+
+    // Format call duration
+    const formatDuration = (seconds: number) => {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    // Handle phone call press
+    const handlePhoneCallPress = async () => {
+        if (!isConnected) {
+            Alert.alert('Connection Error', 'Not connected to server. Please check your internet connection.');
+            return;
+        }
+
+        if (!bookingDetailsInfo?.artisan?.id) {
+            Alert.alert('Error', 'Artisan information not available.');
+            return;
+        }
+
+        const artisan = bookingDetailsInfo.requester;
+        const artisanName = `${artisan.firstName} ${artisan.lastName}`;
+
+        Alert.alert(
+            'Voice Call',
+            `Call ${artisanName}?`,
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Call',
+                    onPress: () => {
+                        makeCall(artisan.id, artisanName);
+                    }
+                }
+            ]
+        );
+    };
+
+    // Handle incoming call actions
+    const handleAnswerCall = () => {
+        answerCall();
+    };
+
+    const handleRejectCall = () => {
+        rejectCall();
+        setShowCallModal(false);
+    };
+
+    const handleEndCall = () => {
+        endCall();
+        setShowCallModal(false);
+    };
 
     useEffect(() => {
         (async () => {
@@ -274,10 +406,25 @@ await new Promise((resolve) => setTimeout(resolve, 1000));
                             </View>
                         </Pressable>
                         <View style={{flexDirection: "row", justifyContent: "space-between", marginTop: 20}}>
-                            <Pressable style={{flexDirection: "row", alignItems: "center"}}>
-                                <FontAwesome name="phone" size={24} color="black" />
-                                <TextRegular style={{marginLeft: 10}}>Phone call</TextRegular>
-                            </Pressable>
+                            <Pressable 
+                                                                style={{ 
+                                                                    flexDirection: "row", 
+                                                                    alignItems: "center",
+                                                                    opacity: isConnected ? 1 : 0.5 
+                                                                }}
+                                                                onPress={handlePhoneCallPress}
+                                                                disabled={!isConnected}
+                                                            >
+                                                                <FontAwesome name="phone" size={24} color="black" />
+                                                                <Text style={{ marginLeft: 10 }}>
+                                                                    {callState.isInCall ? 'In Call' : 'Voice Call'}
+                                                                </Text>
+                                                                {!isConnected && (
+                                                                    <Text style={{ marginLeft: 5, fontSize: 12, color: 'red' }}>
+                                                                        (Offline)
+                                                                    </Text>
+                                                                )}
+                                                            </Pressable>
                             <Pressable onPress={() =>
               navigation.navigate("ArtisanTabNavigation", {
                 screen: "BookingsNavigation",
@@ -328,6 +475,19 @@ await new Promise((resolve) => setTimeout(resolve, 1000));
         otp={otp}
         setOtp={setOtp}
       />
+      <CallModal
+                          visible={showCallModal}
+                          isIncoming={callState.incomingCall}
+                          isConnected={callState.callConnected}
+                          callerName={callState.callerInfo?.name || 'Unknown'}
+                          // callerImage={userProfilePic} // Add if you have artisan profile pic
+                          onAnswer={handleAnswerCall}
+                          onReject={handleRejectCall}
+                          onEnd={handleEndCall}
+                          onToggleMute={toggleMute}
+                          isMuted={callState.isMuted}
+                          duration={formatDuration(callDuration)}
+                      />
                     {/* <ModalLoading verify={isSubmitting?.completeBooking} /> */}
             </KeyboardAvoidingView>
         </SafeAreaView>

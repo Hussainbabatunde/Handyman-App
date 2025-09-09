@@ -48,6 +48,10 @@
     <string>The app needs to access your calendar.</string>
     <key>NSCalendarsUsageDescription</key>
     <string>The app needs to access your calendar.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>This app needs access to camera for video calls</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>This app needs access to microphone for voice calls</string>
     <key>NSRemindersFullAccessUsageDescription</key>
     <string>Allow $(PRODUCT_NAME) to access your reminders</string>
     <key>NSRemindersUsageDescription</key>

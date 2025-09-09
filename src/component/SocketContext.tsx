@@ -61,6 +61,15 @@ export const SocketProvider = ({ children, serverUrl = 'http://localhost:3001' }
         setIsConnected(false);
       });
 
+      // WebRTC-specific event handlers
+      socketInstance.on('user-registered-for-calls', (data: any) => {
+        console.log('User registered for calls:', data);
+      });
+
+      socketInstance.on('call-error', (error: any) => {
+        console.error('Call error:', error);
+      });
+
       socketRef.current = socketInstance;
       setSocket(socketInstance);
 
