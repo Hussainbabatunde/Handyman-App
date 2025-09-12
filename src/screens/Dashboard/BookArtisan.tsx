@@ -258,7 +258,7 @@ const combinedDateTime = new Date(
 
                             <TextSemiBold style={styles.labelText}>Note</TextSemiBold>
                             <View style={styles.inputHolderNew}>
-                                <TextInput multiline onChangeText={(text) => handleInputChange("notes", text)} placeholder="Input text" style={[styles.dataInputed, { fontSize: 17, minHeight: 100 }]} />
+                                <TextInput multiline onChangeText={(text) => handleInputChange("notes", text)} placeholder="Input text" style={[styles.dataInputed, { fontSize: 17, minHeight: 100, textAlignVertical: "top" }]} />
                             </View>
                             {errors.notes && <Text style={styles.errorText}>{errors.notes}</Text>}
 

@@ -74,7 +74,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {paddingTop: 0}]}>
       {isSubmitting?.recentBookings ?
                             <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "white" }}>
                                 {/* <StatusBar backgroundColor="#fff" translucent /> */}
@@ -98,8 +98,8 @@ const Dashboard = () => {
       </View>
       <View style={{gap: 15, flexDirection: "row", marginTop: 25}}>
         <View style={{backgroundColor: "#E13548", paddingLeft: 18, paddingTop: 133, paddingBottom: 33, width: 155, borderRadius: 10, position: "relative"}}>
-          <Image source={outerTransparent} style={{position: "absolute", top: 0, width: 150, objectFit: "contain", zIndex: 10}} />
-          <Image source={innerTransparent} style={{position: "absolute", top: 0, width: 100, objectFit: "contain", zIndex: 100}} />
+          {/* <Image source={outerTransparent} style={{position: "absolute", top: 0, width: 150, objectFit: "contain", zIndex: 10}} />
+          <Image source={innerTransparent} style={{position: "absolute", top: 0, width: 100, objectFit: "contain", zIndex: 100}} /> */}
           <TextRegular style={{color: "white", fontSize: 12}}>Total Jobs Pending</TextRegular>
           <TextSemiBold style={{color: "white", fontSize: 28}}>{recentBookingsDetailsRes?.bookingsCountPending}</TextSemiBold>
         </View>
@@ -190,7 +190,8 @@ export default Dashboard
 const styles = StyleSheet.create({
     container: {
         flex: 1, 
-        backgroundColor: "white"
+        backgroundColor: "white",
+         paddingTop: 20,
     },
     nameNotifyView: {
         flexDirection: "row",

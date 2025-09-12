@@ -334,7 +334,8 @@ function App(): React.JSX.Element {
     );
   };
 
-  let serverUrl = Platform.OS == "ios" ? "http://localhost:3001" : "http://10.0.2.2:3001"
+  // let serverUrl = Platform.OS == "ios" ? "http://localhost:3001" : "http://10.0.2.2:3001"
+  let serverUrl = Platform.OS == "ios" ? "https://toolbox.com.ng" : "https://toolbox.com.ng"
 
   return (
     // <NavigationContainer>

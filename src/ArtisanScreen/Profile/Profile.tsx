@@ -30,12 +30,19 @@ const Profile = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
         <View style={{justifyContent: "center", alignItems: "center", marginTop: 40}}>
-          <View style={{backgroundColor: "#D9D9D980", paddingHorizontal: 26, paddingVertical: 24, borderRadius: 50, position: "relative"}}>
+          <Pressable onPress={() =>
+              navigation.navigate("ArtisanTabNavigation", {
+                screen: "ProfileNavigation",
+                params: {
+                  screen: "ProfileUpdateForm",
+                },
+              })
+            } style={{backgroundColor: "#D9D9D980", paddingHorizontal: 26, paddingVertical: 24, borderRadius: 50, position: "relative"}}>
             <Ionicons name="person-outline" size={32} color="black" />
           <View style={{backgroundColor: "black", paddingHorizontal: 5, paddingVertical: 5, borderRadius: 50, position: "absolute", top: 5, right: 0}}>
             <Feather name="edit-3" size={10} color="white" />
           </View>
-      </View>
+      </Pressable>
       <TextBold style={{color: "#696969", marginTop: 10, fontSize: 18}}>{capitalize(userData?.data?.firstName ?? userData?.user?.firstName)} {capitalize(userData?.data?.lastName ?? userData?.user?.lastName)}</TextBold>
       <TextRegular style={{color: "black", fontSize: 14}}>{userData?.data?.email ?? userData?.user?.email}</TextRegular>
       </View>
