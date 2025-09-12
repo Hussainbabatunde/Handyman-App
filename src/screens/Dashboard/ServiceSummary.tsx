@@ -2,11 +2,12 @@ import { Entypo, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icon
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useEffect } from "react"
-import { ActivityIndicator, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
+import { ActivityIndicator, Image, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import { splitIntoParagraphs } from "../../services/utils";
 import { TextRegular } from "../../component/StyledText";
 import { DashboardContext } from "./DashboardStack";
+import DescriptionRenderer from "./ParseDesc";
 
 export default function ServiceSummary () {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -60,8 +61,9 @@ export default function ServiceSummary () {
                         {allArtisanByProfession?.jobType?.name}
                     </Text>
                     <View style={{flex: 1}}>
-                        <ScrollView bounces={false}>
-                    <TextRegular style={styles.descText}>{allArtisanByProfession?.jobType?.description}</TextRegular>
+                        <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
+                    {/* <TextRegular style={styles.descText}>{allArtisanByProfession?.jobType?.description}</TextRegular> */}
+                    <DescriptionRenderer description={allArtisanByProfession?.jobType?.description || ""} />
                     </ScrollView>
                     </View>
                     <View style={{width: "100%"}}>

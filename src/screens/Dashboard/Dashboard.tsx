@@ -1,4 +1,4 @@
-import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Image, Platform, Pressable, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native'
 import React, { useContext } from 'react'
 import Avatar from "../../../assets/images/avatar.png"
 import { TextMedium, TextRegular, TextSemiBold } from '../../component/StyledText'
@@ -75,7 +75,7 @@ const Dashboard = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {paddingTop: 0}]}>
         <SafeAreaView style={styles.container}>
             <View style={[styles.container, {paddingHorizontal: 21}]}>
       <View style={styles.nameNotifyView}>
@@ -181,7 +181,8 @@ export default Dashboard
 const styles = StyleSheet.create({
     container: {
         flex: 1, 
-        backgroundColor: "white"
+        backgroundColor: "white",
+         paddingTop: 20,
     },
     nameNotifyView: {
         flexDirection: "row",

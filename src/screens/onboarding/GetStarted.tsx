@@ -1,5 +1,5 @@
-import React from "react";
-import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import React, { useEffect } from "react";
+import { Alert, Image, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import SanlamLogo from "../../../assets/images/sanlamLogo.png"
 import WomanWalking from "../../../assets/images/HandyManImg.png"
 import AuthSubmitButton from "../../component/SubmitActionButton";
@@ -10,6 +10,7 @@ import Constants from 'expo-constants';
 
 export default function GetStarted () {
   const navigation = useNavigation<StackNavigationProp<any>>();
+const API_URL = Constants.expoConfig?.extra?.eas?.API_URL;
 
     return (
         <View style={[styles.container, {backgroundColor: "white"}]}>

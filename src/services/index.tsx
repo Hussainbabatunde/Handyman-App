@@ -8,10 +8,10 @@ import { Platform } from 'react-native';
 const API_URL = Constants.expoConfig?.extra?.eas?.API_URL;
 const REQUEST_TIMEOUT = Constants.expoConfig?.extra?.eas?.REQUEST_TIMEOUT;
 
-axios.defaults.baseURL = Platform.OS == "ios" ? API_URL : "http://10.0.2.2:3001/api/v1";
+axios.defaults.baseURL = Platform.OS == "ios" ? API_URL : "https://toolbox.com.ng/api/v1/";
 axios.defaults.timeout = parseInt(REQUEST_TIMEOUT, 10);
 
-// console.log("API url ", API_URL);
+console.log("API url ", API_URL);
 
 
 axios.interceptors.request.use(
@@ -30,6 +30,9 @@ axios.interceptors.request.use(
 
 
 export const verifyPhoneApi = async (values: object) => {
+  console.log("got here: ", values)
+  const url = `${axios.defaults.baseURL ?? ""}auth/verify`;
+  console.log("Calling URL:", url, "with values:", values);
   const { data } = await axios.post(`auth/verify`, values);
   return data;
 }
@@ -142,6 +145,15 @@ export const submitKycApi = async (token: any, values: object) => {
 
 export const recentBookingsApi = async (token: any) => {
   const { data } = await axios.get(`bookings/artisan/recent`, {
+    headers: {
+      "Authorization":"Bearer " + token
+    }
+  });
+  return data;
+}
+
+export const updateProfileDetailsApi = async (token: string | null, id: string, values: object) => {
+  const { data } = await axios.put(`auth/update/${id}`, values, {
     headers: {
       "Authorization":"Bearer " + token
     }

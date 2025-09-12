@@ -32,6 +32,9 @@ export default function Signup() {
   const [selected, setSelected] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
+  
+  
+
     const validateInputs = () => {
         let newErrors: { [key: string]: string } = {};
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email regex validation
@@ -110,7 +113,9 @@ export default function Signup() {
       item?.name?.toLowerCase().includes(query.toLowerCase())
     );
 
-  const toggleSelect = (name: string) => {
+    
+    const toggleSelect = (name: string) => {
+    console.log("selected now: ", name);
     if (selected.includes(name)) {
       setSelected(selected.filter((s) => s !== name)); // remove
     } else {
@@ -125,7 +130,7 @@ export default function Signup() {
   };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, {paddingBottom: 30}]}>
             <View style={[styles.BodySpacing, { flex: 1 }]}>
                 <View style={{ flexDirection: "row", alignItems: "center", marginTop: StatusBar.currentHeight }}>
                     <Pressable
@@ -191,7 +196,7 @@ export default function Signup() {
   onFocus={() => {
     setIsOpen(true)
   }}
-  onBlur={() => setIsOpen(false)}
+  // onBlur={() => setIsOpen(false)}
           onChangeText={(text) => {
             setQuery(text);
             setIsOpen(true);
@@ -206,9 +211,12 @@ export default function Signup() {
           keyExtractor={(item) => item?.id}
           renderItem={({ item }) => (
             <TouchableOpacity
-              style={styles.dropdownItem}
-              onPress={() => toggleSelect(item?.key)}
-            >
+  style={[
+    styles.dropdownItem,
+    selected.includes(item.key) && { backgroundColor: "lightblue" },
+  ]}
+  onPress={() => toggleSelect(item.key)}
+>
               <Text style={styles.dropdownText}>{item?.name}</Text>
             </TouchableOpacity>
           )}

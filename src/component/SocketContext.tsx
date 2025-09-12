@@ -21,7 +21,7 @@ const getClientId = async () => {
   }
 };
 
-export const SocketProvider = ({ children, serverUrl = 'http://localhost:3001' }: any) => {
+export const SocketProvider = ({ children, serverUrl = 'https://toolbox.com.ng' }: any) => {
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [clientId, setClientId] = useState(null);
@@ -59,6 +59,15 @@ export const SocketProvider = ({ children, serverUrl = 'http://localhost:3001' }
       socketInstance.on('connect_error', (error: any) => {
         console.error('Socket connection error:', error);
         setIsConnected(false);
+      });
+
+      // WebRTC-specific event handlers
+      socketInstance.on('user-registered-for-calls', (data: any) => {
+        console.log('User registered for calls:', data);
+      });
+
+      socketInstance.on('call-error', (error: any) => {
+        console.error('Call error:', error);
       });
 
       socketRef.current = socketInstance;
