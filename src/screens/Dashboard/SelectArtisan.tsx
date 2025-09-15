@@ -2,7 +2,7 @@ import { AntDesign, Entypo, Feather, MaterialCommunityIcons, MaterialIcons } fro
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useState } from "react"
-import { Image, KeyboardAvoidingView, Modal, Platform, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { Image, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import { splitIntoParagraphs } from "../../services/utils";
 import { TextBold, TextRegular, TextSemiBold } from "../../component/StyledText";
@@ -16,6 +16,7 @@ import { DashboardContext } from "./DashboardStack";
 import { capitalize } from "../../context/actions/utils";
 import ModalLoading from "../../component/modals/ModalLoading";
 import StarRating from "../../component/StarRating";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SelectArtisan() {
     const navigation = useNavigation<StackNavigationProp<any>>();

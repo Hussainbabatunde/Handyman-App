@@ -2,13 +2,14 @@ import { Entypo, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icon
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useEffect, useRef, useState } from "react"
-import { Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
+import { Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import HiddenTextInput from "../../component/HiddenTextInput";
 import { OnboardContext } from ".";
 import ModalLoading from "../../component/modals/ModalLoading";
 import { maskMiddle } from "../../context/actions/utils";
 import { TextSemiBold } from "../../component/StyledText";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ValidatePhone () {
     const navigation = useNavigation<StackNavigationProp<any>>();

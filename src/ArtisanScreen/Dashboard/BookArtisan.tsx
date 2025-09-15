@@ -2,7 +2,7 @@ import { AntDesign, Entypo, Feather, MaterialCommunityIcons, MaterialIcons } fro
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useEffect, useState } from "react"
-import { KeyboardAvoidingView, Modal, Platform, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import { splitIntoParagraphs } from "../../services/utils";
 import { TextBold, TextRegular, TextSemiBold } from "../../component/StyledText";
@@ -11,6 +11,7 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import moment from "moment";
 import { DashboardContext } from "./DashboardStack";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function BookArtisan() {
     const navigation = useNavigation<StackNavigationProp<any>>();

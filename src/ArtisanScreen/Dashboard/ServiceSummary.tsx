@@ -2,11 +2,12 @@ import { Entypo, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icon
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useEffect } from "react"
-import { ActivityIndicator, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
+import { ActivityIndicator, Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import { splitIntoParagraphs } from "../../services/utils";
 import { TextRegular } from "../../component/StyledText";
 import { DashboardContext } from "./DashboardStack";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ServiceSummary () {
     const navigation = useNavigation<StackNavigationProp<any>>();

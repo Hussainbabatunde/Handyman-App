@@ -2,9 +2,10 @@ import { Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons } from "@expo/v
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react"
-import { Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
+import { Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 // import AuthSubmitButton from "../component/SubmitActionButton";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SuccessPage () {
     const navigation = useNavigation<StackNavigationProp<any>>();

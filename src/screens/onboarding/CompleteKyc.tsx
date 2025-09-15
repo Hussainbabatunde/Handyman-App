@@ -1,4 +1,4 @@
-import { Alert, Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Alert, Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useContext, useState } from 'react'
 import Avatar from "../../../assets/images/avatar.png"
 import { TextBold, TextMedium, TextRegular, TextSemiBold } from '../../component/StyledText'
@@ -11,6 +11,7 @@ import AppContext from '../../context'
 import { capitalize, getStatusColor } from '../../context/actions/utils'
 import { OnboardContext } from '.'
 import ModalLoading from '../../component/modals/ModalLoading'
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const CompleteKyc = () => {
     const { dispatch, logoutUser, removeUserData, userData, jobTypes } =

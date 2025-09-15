@@ -2,13 +2,14 @@ import { Entypo, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icon
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useState } from "react"
-import { Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
+import { Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import { TextBold, TextRegular } from "../../component/StyledText";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import AppContext from "../../context";
 import { OnboardContext } from ".";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // ✅ Yup validation schema
 const validationSchema = Yup.object().shape({

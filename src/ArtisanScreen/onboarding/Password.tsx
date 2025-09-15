@@ -1,4 +1,4 @@
-import { ActivityIndicator, Dimensions, FlatList, Image, Platform, Pressable, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Dimensions, FlatList, Image, Platform, Pressable, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useContext, useEffect, useState } from 'react'
 import { Ionicons, MaterialIcons } from '@expo/vector-icons'
 import { StackNavigationProp } from '@react-navigation/stack'
@@ -8,6 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import { BackLogin } from '../../component/SvgFiles'
 import { OnboardContext } from '.'
 import { TextMedium } from '../../component/StyledText'
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const { width } = Dimensions.get('window')
 

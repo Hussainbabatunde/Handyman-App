@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, Pressable, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useContext, useEffect } from 'react'
 import Avatar from "../../../assets/images/avatar.png"
 import { TextMedium, TextRegular, TextSemiBold } from '../../component/StyledText'
@@ -19,6 +19,7 @@ import AppContext from '../../context'
 import { DashboardContext } from './DashboardStack'
 import { capitalize, getStatusColor } from '../../context/actions/utils'
 import moment from 'moment'
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Dashboard = () => {
   const { dispatch, logoutUser, removeUserData, userData, jobTypes } =

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Alert, Image, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Alert, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import SanlamLogo from "../../../assets/images/sanlamLogo.png"
 import WomanWalking from "../../../assets/images/HandyManImg.png"
 import AuthSubmitButton from "../../component/SubmitActionButton";
@@ -7,6 +7,7 @@ import { TextBold, TextMedium, TextRegular } from "../../component/StyledText";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Constants from 'expo-constants';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function GetStarted () {
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -18,7 +19,8 @@ const API_URL = Constants.expoConfig?.extra?.eas?.API_URL;
             {/* <Image source={SanlamLogo} style={styles.logoImg} /> */}
             <View style={styles.GetStartedContent}>
                 <Image source={WomanWalking} style={styles.womanWalkingImg} />
-                <TextBold style={styles.descPage}>Best Solution for</TextBold>
+                <TextBold style={styles.descPage}>SMP 96 Group 1</TextBold>
+                <TextBold style={[styles.descPage, {marginTop: 5}]}>Best Solution for</TextBold>
 <TextBold style={[styles.descPage, {marginTop: 0}]}>Every House Problems</TextBold>
 <TextRegular style={{color: "#696969", fontSize: 14, textAlign: "center", maxWidth: 324, marginVertical: 25}}>We work to ensure people comfort at their home, and to provide the best and the fastest help at fair prices.</TextRegular>
                 <Pressable onPress={() => navigation.navigate("VerifyPhone")} style={{backgroundColor: "#FA4E61", paddingHorizontal: 60, paddingVertical: 13, borderRadius: 25}}>

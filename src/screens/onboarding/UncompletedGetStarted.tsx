@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import SanlamLogo from "../../../assets/images/sanlamLogo.png"
 import WomanWalking from "../../../assets/images/uncompleteKycImg.png"
 import AuthSubmitButton from "../../component/SubmitActionButton";
@@ -7,6 +7,7 @@ import { TextBold, TextMedium, TextRegular } from "../../component/StyledText";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import AppContext from "../../context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function UncompletedGetStarted () {
   const navigation = useNavigation<StackNavigationProp<any>>();

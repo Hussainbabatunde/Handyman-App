@@ -2,7 +2,7 @@ import { AntDesign, Entypo, Feather, FontAwesome, Ionicons, MaterialCommunityIco
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useEffect, useState } from "react"
-import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Modal, PermissionsAndroid, Platform, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Modal, PermissionsAndroid, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import { splitIntoParagraphs } from "../../services/utils";
 import { TextBold, TextMedium, TextRegular, TextSemiBold } from "../../component/StyledText";
@@ -22,6 +22,7 @@ import * as Calendar from 'expo-calendar';
 import { useSocket } from "../../component/SocketContext";
 import { useWebRTCCall } from "../../component/hooks/useWebRTCCall";
 import { CallModal } from "../../component/hooks/CallModal";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function BookingDetailsPage() {
     const navigation = useNavigation<StackNavigationProp<any>>();

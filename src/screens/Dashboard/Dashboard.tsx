@@ -1,4 +1,4 @@
-import { Image, Platform, Pressable, SafeAreaView, StatusBar, StyleSheet, Text, View } from 'react-native'
+import { Image, Platform, Pressable, StatusBar, StyleSheet, Text, View } from 'react-native'
 import React, { useContext } from 'react'
 import Avatar from "../../../assets/images/avatar.png"
 import { TextMedium, TextRegular, TextSemiBold } from '../../component/StyledText'
@@ -18,6 +18,7 @@ import { StackNavigationProp } from '@react-navigation/stack'
 import AppContext from '../../context'
 import { DashboardContext } from './DashboardStack'
 import { capitalize } from '../../context/actions/utils'
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Dashboard = () => {
   const { dispatch, logoutUser, removeUserData, userData, jobTypes } =

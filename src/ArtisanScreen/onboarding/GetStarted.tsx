@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import SanlamLogo from "../../../assets/images/sanlamLogo.png"
 import WomanWalking from "../../../assets/images/HandyManImg.png"
 import AuthSubmitButton from "../../component/SubmitActionButton";
@@ -7,6 +7,7 @@ import { TextBold, TextMedium, TextRegular } from "../../component/StyledText";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import Constants from 'expo-constants';
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function GetStarted () {
   const navigation = useNavigation<StackNavigationProp<any>>();

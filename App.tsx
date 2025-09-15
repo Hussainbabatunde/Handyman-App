@@ -335,7 +335,7 @@ function App(): React.JSX.Element {
   };
 
   // let serverUrl = Platform.OS == "ios" ? "http://localhost:3001" : "http://10.0.2.2:3001"
-  let serverUrl = Platform.OS == "ios" ? "https://toolbox.com.ng" : "https://toolbox.com.ng"
+  let serverUrl = Platform.OS == "ios" ? "wss://toolbox.com.ng:3001/" : "wss://toolbox.com.ng:3001/"
 
   return (
     // <NavigationContainer>
@@ -344,7 +344,7 @@ function App(): React.JSX.Element {
     //   </Stack.Navigator>
     // </NavigationContainer>
     <ErrorBoundary FallbackComponent={CustomFallback}>
-      <SocketProvider serverUrl={serverUrl}>
+      <SocketProvider >
       <View style={styles.container} onLayout={onLayoutRootView}>
         <FlashMessage position="bottom" />
         <AppStack state={state} dispatch={dispatch} />

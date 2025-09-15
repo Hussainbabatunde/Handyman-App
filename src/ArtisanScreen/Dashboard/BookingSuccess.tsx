@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import SanlamLogo from "../../../assets/images/sanlamLogo.png"
 import WomanWalking from "../../../assets/images/bookingSuccessImg.png"
 import AuthSubmitButton from "../../component/SubmitActionButton";
@@ -13,6 +13,7 @@ import { DashboardContext } from "./DashboardStack";
 import moment from "moment";
 import { capitalize } from "../../context/actions/utils";
 import StarRating from "../../component/StarRating";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function BookingSuccess() {
     const navigation = useNavigation<StackNavigationProp<any>>();

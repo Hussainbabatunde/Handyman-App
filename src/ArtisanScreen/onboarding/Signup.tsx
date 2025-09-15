@@ -2,11 +2,12 @@ import { Entypo, MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icon
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useEffect, useState } from "react"
-import { FlatList, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { FlatList, Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import { TextBold, TextRegular } from "../../component/StyledText";
 import { OnboardContext } from ".";
 import AppContext from "../../context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 // const jobTypes = [
 //   "Frontend Developer",

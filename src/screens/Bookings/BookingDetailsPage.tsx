@@ -2,10 +2,11 @@ import { AntDesign, Entypo, Feather, FontAwesome, Fontisto, Ionicons, MaterialCo
 import { useIsFocused, useNavigation, useRoute } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useContext, useEffect, useState } from "react"
-import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Modal, PermissionsAndroid, Platform, Pressable, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Modal, PermissionsAndroid, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native"
 import AuthSubmitButton from "../../component/SubmitActionButton";
 import { splitIntoParagraphs } from "../../services/utils";
 import { TextBold, TextMedium, TextRegular, TextSemiBold } from "../../component/StyledText";
+import { SafeAreaView } from "react-native-safe-area-context";
 import DateTimePicker, {
     DateTimePickerAndroid,
 } from "@react-native-community/datetimepicker";
