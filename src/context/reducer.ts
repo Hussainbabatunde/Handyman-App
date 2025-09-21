@@ -111,7 +111,8 @@ export const AppReducer = (initialState: any, action: any) => {
                 userToken: action.userToken,
                 userData: action.userData,
                 identifierName: action.identifierName,
-                userInfo: action.userInfo
+                userInfo: action.userInfo,
+                identifier: action.identifier
             };
         }
         case "SET_ALL_POLICY": {

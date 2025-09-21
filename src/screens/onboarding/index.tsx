@@ -17,7 +17,7 @@ import GetStarted from "./GetStarted";
 import Signup from "./Signup";
 import SignupSuccess from "./SignupSuccess";
 import { createUserType, RegisterResponse, validatePhoneResponse, validateType, verifyPhoneResType, verifyType } from "../../services/ApiTypes";
-import { loginPhoneApi, registerApi, resendPhoneOtpApi, submitKycApi, uploadDocument, validatePhoneApi, verifyPhoneApi } from "../../services";
+import { forgotPasswordApi, loginPhoneApi, registerApi, resendPhoneOtpApi, submitKycApi, uploadDocument, validatePhoneApi, verifyPhoneApi } from "../../services";
 import Password from "./Password";
 import ConfirmPassword from "./ConfirmPassword";
 import UncompletedGetStarted from "./UncompletedGetStarted";
@@ -25,6 +25,9 @@ import ContactAddress from "./ContactAddress";
 import CompleteKyc from "./CompleteKyc";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import GuarantorDetails from "./GuarantorDetails";
+import ForgotValidatePhone from "./ForgotValidateNumber";
+import SetNewPassword from "./SetNewPassword";
+import ForgotPasswordSuccess from "./ForgotPasswordSuccess";
 
 export const OnboardContext = createContext<PropsAppContext>({});
 const OnboardStack = createStackNavigator();
@@ -36,7 +39,8 @@ export default function OnboardStackScreen() {
     identifier,
     setUserData,
     setIdentifier,
-    formatPhoneCode
+    formatPhoneCode,
+    identifierName
   } = React.useContext(AppContext);
 
   const navigation = useNavigation<StackNavigationProp<any>>();
@@ -158,6 +162,31 @@ const verifyPhoneApiCall = async (value: verifyType) => {
     setIsSubmitting((prev) => ({...prev, validatePhone: false})));
   };
 
+  const forgotValidatePhoneApiCall = async (value: validateType) => {
+    Keyboard.dismiss();
+    setIsSubmitting((prev) => ({...prev, validatePhone: true}));
+    
+    await validatePhoneApi(value)
+      .then((response) => response)
+      .then(async (data) => {
+        // console.log("validate phone: ", data);
+        setValidatePhoneRes(data)
+    setIsSubmitting((prev) => ({...prev, validatePhone: false}));
+        navigation.navigate("OnboardStackScreen", {
+          screen: "SetNewPassword",
+        });
+        
+
+      })
+      .catch((error) => {
+    setIsSubmitting((prev) => ({...prev, validatePhone: false}));
+        console.log(error?.response, "error_____");
+        errorResponse({ error, dispatch });
+      })
+      .then(() => 
+    setIsSubmitting((prev) => ({...prev, validatePhone: false})));
+  };
+
   const registerApiCall = async () => {
     Keyboard.dismiss();
     
@@ -183,11 +212,36 @@ const verifyPhoneApiCall = async (value: verifyType) => {
     setIsSubmitting((prev) => ({...prev, register: false})));
   };
 
+  const forgotPasswordApiCall = async (values: any) => {
+    Keyboard.dismiss();
+    
+    setIsSubmitting((prev) => ({...prev, register: true}));
+    
+    await forgotPasswordApi(values)
+      .then((response) => response)
+      .then(async (data) => {
+        // await AsyncStorage.setItem("userToken", data?.accessToken)
+        // setRegisterRes(data)
+    setIsSubmitting((prev) => ({...prev, register: false}));
+        navigation.navigate("OnboardStackScreen", {
+          screen: "ForgotPasswordSuccess",
+        });
+
+      })
+      .catch((error) => {
+    setIsSubmitting((prev) => ({...prev, register: false}));
+        console.log(error?.response, "error_____");
+        errorResponse({ error, dispatch });
+      })
+      .then(() => 
+    setIsSubmitting((prev) => ({...prev, register: false})));
+  };
+
   const loginApiCall = async (password: string) => {
     Keyboard.dismiss();
     setIsSubmitting((prev) => ({...prev, login: true}));
     let sentData = {
-      phoneNumber: phoneNumber,
+      phoneNumber: phoneNumber || identifierName,
       password: password
     }
     
@@ -323,7 +377,9 @@ const verifyPhoneApiCall = async (value: verifyType) => {
         documentUpload,
         SubmitKycApiCall,
         guarantorDetails, 
-        setGuarantorDetails
+        setGuarantorDetails,
+        forgotValidatePhoneApiCall,
+        forgotPasswordApiCall
       }}
     >
       <OnboardStack.Navigator
@@ -332,9 +388,12 @@ const verifyPhoneApiCall = async (value: verifyType) => {
           headerShown: false,
         }}
       >
-        {identifier ? (
+        {identifierName ? (
           <OnboardStack.Group>
             <OnboardStack.Screen name="PinCode" component={PinCode} />
+            <OnboardStack.Screen name="ForgotValidatePhone" component={ForgotValidatePhone} />
+            <OnboardStack.Screen name="SetNewPassword" component={SetNewPassword} />
+            <OnboardStack.Screen name="ForgotPasswordSuccess" component={ForgotPasswordSuccess} />
           </OnboardStack.Group>
         ) : (
           <OnboardStack.Group>
@@ -349,6 +408,13 @@ const verifyPhoneApiCall = async (value: verifyType) => {
           component={UncompletedGetStarted}
           options={{headerShown: false, gestureEnabled: false}}
         />
+        <OnboardStack.Screen
+          name="SetNewPassword"
+          component={SetNewPassword}
+          options={{headerShown: false, gestureEnabled: false}}
+        />
+            <OnboardStack.Screen name="ForgotValidatePhone" component={ForgotValidatePhone} />
+            <OnboardStack.Screen name="ForgotPasswordSuccess" component={ForgotPasswordSuccess} />
         <OnboardStack.Screen
           name="ContactAddress"
           component={ContactAddress}

@@ -32,6 +32,7 @@ const ProfileNavigation = ({navigation, route}: any) => {
   })
   const [uploadedImage, setUploadedImage] = useState("")
   const [updatedProfile, setUpdatedProfile] = useState<any>(null)
+  const [fileSentName, setFileSentName] = useState("")
   React.useLayoutEffect(() => {
     const routeName = getFocusedRouteNameFromRoute(route);
     const shouldShowTabBar = !routeName || routeName === 'Profile';
@@ -50,6 +51,7 @@ const ProfileNavigation = ({navigation, route}: any) => {
         .then(async (data) => {
       setIsSubmitting((prev) => ({...prev, uploadingMOI: false}));
           // console.log("data res: ", data?.url);
+          setFileSentName(data?.name)
           setUploadedImage(data?.url)
           // setBankInfo(data?.data)
         }).catch(error => {
@@ -92,7 +94,8 @@ const ProfileNavigation = ({navigation, route}: any) => {
         isSubmitting,
         UploadDocmentApi,
         uploadedImage,
-        updateProfileApiCall
+        updateProfileApiCall,
+        fileSentName
       }}>
       <Stack.Navigator screenOptions={{
     headerShown: false,

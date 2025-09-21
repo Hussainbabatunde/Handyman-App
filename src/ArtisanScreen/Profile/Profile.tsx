@@ -48,20 +48,27 @@ const Profile = () => {
       </View>
 
       <TextSemiBold style={{color: "#9999A3", fontSize: 12, marginTop: 50}}>Account</TextSemiBold>
-      <Pressable style={{paddingVertical: 18, flexDirection: "row"}}>
+      <Pressable onPress={() =>
+              navigation.navigate("ArtisanTabNavigation", {
+                screen: "ProfileNavigation",
+                params: {
+                  screen: "ProfileUpdateForm",
+                },
+              })
+            } style={{paddingVertical: 18, flexDirection: "row"}}>
         <View style={{flex: 1, flexDirection: "row"}}>
           <Ionicons name="person-outline" size={20} color="black" />
           <TextMedium style={{color: "black", fontSize: 15, marginLeft: 15}}>Personal Information</TextMedium>
         </View>
         <FontAwesome5 name="chevron-right" size={16} color="black" />
       </Pressable>
-      <Pressable style={{paddingVertical: 18, flexDirection: "row"}}>
+      {/* <Pressable style={{paddingVertical: 18, flexDirection: "row"}}>
         <View style={{flex: 1, flexDirection: "row"}}>
           <Feather name="lock" size={18} color="black" />
           <TextMedium style={{color: "black", fontSize: 15, marginLeft: 15}}>Change login PIN</TextMedium>
         </View>
         <FontAwesome5 name="chevron-right" size={16} color="black" />
-      </Pressable>
+      </Pressable> */}
 
       <TextSemiBold style={{color: "#9999A3", fontSize: 12, marginTop: 33}}>General</TextSemiBold>
       <Pressable style={{paddingVertical: 18, flexDirection: "row"}}>

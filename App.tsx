@@ -118,11 +118,13 @@ function App(): React.JSX.Element {
 
 
         //get all customer data stored when the app is reopened
-        userToken = await AsyncStorage.getItem('userToken') || null;
-        userTokenExp = await AsyncStorage.getItem('userTokenExp') || null;
-        userData = JSON.parse(await AsyncStorage.getItem('userData') || '{}');
+        // userToken = await AsyncStorage.getItem('userToken') || null;
+        // userTokenExp = await AsyncStorage.getItem('userTokenExp') || null;
+        // userData = JSON.parse(await AsyncStorage.getItem('userData') || '{}');
         identifier = (await AsyncStorage.getItem("identifier")) || "";
         identifierName = (await AsyncStorage.getItem("identifierName")) || null;
+        // console.log("identifier: ",identifier);
+        
       } catch (e) {
         console.warn(e);
       } finally {
@@ -134,6 +136,11 @@ function App(): React.JSX.Element {
           identifier,
           identifierName,
         });
+
+        // ⏳ Add a delay before marking app as ready
+      setTimeout(() => {
+        dispatch({ type: "SET_APP_READY" });
+      }, 4000); // 4 seconds
       }
     }
 

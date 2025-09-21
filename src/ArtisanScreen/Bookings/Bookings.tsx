@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { TextBold, TextMedium, TextRegular, TextSemiBold } from '../../component/StyledText'
@@ -16,7 +16,6 @@ import delivery from "../../../assets/images/delivery.png"
 import more from "../../../assets/images/more.png"
 import { capitalize, getStatusColor } from '../../context/actions/utils'
 import moment from 'moment'
-import { FlatList } from 'react-native-gesture-handler'
 
 const Bookings = () => {
     const navigation = useNavigation<StackNavigationProp<any>>();
@@ -25,6 +24,8 @@ const Bookings = () => {
     const [refreshing, setRefreshing] = useState(false);
 
   const onRefresh = useCallback(async () => {
+    console.log("works");
+    
     try {
       setRefreshing(true);
       await getAllBookingsApiCall(); // call your API
@@ -239,6 +240,7 @@ const Bookings = () => {
                 {filteredData.length > 0 ? (
         <FlatList
           data={filteredData}
+          style={{flex: 1}}
           keyExtractor={(item) => item.id.toString()}
           renderItem={renderItem}
           refreshing={refreshing}

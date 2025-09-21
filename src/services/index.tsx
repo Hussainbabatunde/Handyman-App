@@ -52,6 +52,11 @@ export const registerApi = async (values: object) => {
   return data;
 }
 
+export const forgotPasswordApi = async (values: object) => {
+  const { data } = await axios.post(`auth/forgot-password`, values);
+  return data;
+}
+
 export const loginPhoneApi = async (values: object) => {
   const { data } = await axios.post(`auth/login`, values);
   return data;

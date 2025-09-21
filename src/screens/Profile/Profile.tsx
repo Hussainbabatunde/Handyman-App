@@ -48,13 +48,6 @@ const Profile = () => {
         </View>
         <FontAwesome5 name="chevron-right" size={16} color="black" />
       </Pressable>
-      <Pressable style={{paddingVertical: 18, flexDirection: "row"}}>
-        <View style={{flex: 1, flexDirection: "row"}}>
-          <Feather name="lock" size={18} color="black" />
-          <TextMedium style={{color: "black", fontSize: 15, marginLeft: 15}}>Change login PIN</TextMedium>
-        </View>
-        <FontAwesome5 name="chevron-right" size={16} color="black" />
-      </Pressable>
 
       <TextSemiBold style={{color: "#9999A3", fontSize: 12, marginTop: 33}}>General</TextSemiBold>
       <Pressable style={{paddingVertical: 18, flexDirection: "row"}}>

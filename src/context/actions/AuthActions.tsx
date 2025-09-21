@@ -7,15 +7,17 @@ export default {
         console.log("setUserData function is being called!"); // Check if this appears
         await AsyncStorage.setItem('userToken', userToken);
         await AsyncStorage.setItem('userData', JSON.stringify(userData));
-        await AsyncStorage.setItem('identifierName', `${userInfo?.firstName}`);
+        await AsyncStorage.setItem('identifierName', `${userInfo?.phoneNumber}`);
+        await AsyncStorage.setItem('identifier', `${userInfo?.firstName}`);
         await AsyncStorage.setItem('userInfo', JSON.stringify(userInfo));
         
         dispatch({
             type: 'LOGIN',
             userToken,
             userData,
-            identifierName: `${userInfo?.firstName}`,
-            userInfo
+            identifierName: `${userInfo?.phoneNumber}`,
+            userInfo,
+            identifier: `${userInfo?.firstName}`,
         });
     },
     setIdentifier: async (dispatch: any, identifier: string, identifierName: string) => {

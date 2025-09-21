@@ -112,23 +112,30 @@ const Dashboard = () => {
 
       <View style={{flexDirection: "row", justifyContent: "space-between", marginTop: 24}}>
         <TextSemiBold style={{color: "#696969", fontSize: 12}}>Upcoming Jobs</TextSemiBold>
-        <Pressable style={{borderBottomWidth: 1, borderBottomColor: "#FA4E61"}}>
+        <Pressable onPress={() =>
+              navigation.navigate("ArtisanTabNavigation", {
+                screen: "BookingsNavigation",
+                params: {
+                  screen: "Bookings",
+                },
+              })
+            } style={{borderBottomWidth: 1, borderBottomColor: "#FA4E61"}}>
           <TextSemiBold style={{color: "#FA4E61", fontSize: 12}}>View all</TextSemiBold>
         </Pressable>
       </View>
 
       {recentBookingsDetailsRes?.data?.map((each: any, index: number)=> <Pressable
-          // onPress={() =>
-          //           navigation.navigate("TabNavigation", {
-          //             screen: "BookingsNavigation",
-          //             params: {
-          //               screen: "BookingDetailsPage",
-          //               params: {
-          //       details: item
-          //     }
-          //             },
-          //           })
-          //         }
+          onPress={() =>
+              navigation.navigate("ArtisanTabNavigation", {
+                screen: "BookingsNavigation",
+                params: {
+                  screen: "BookingDetailsPage",
+                  params: {
+          details: each
+        }
+                },
+              })
+            }
             style={{
               borderBottomWidth: 1,
               borderBottomColor: "#E4E5E7",
@@ -192,7 +199,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1, 
         backgroundColor: "white",
-         paddingTop: 20,
+        //  paddingTop: 20,
     },
     nameNotifyView: {
         flexDirection: "row",

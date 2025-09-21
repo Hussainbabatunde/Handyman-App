@@ -21,7 +21,7 @@ const getClientId = async () => {
   }
 };
 
-export const SocketProvider = ({ children, serverUrl = 'wss://toolbox.com.ng/ws/' }: any) => {
+export const SocketProvider = ({ children, serverUrl = 'wss://toolbox.com.ng/' }: any) => {
   const [socket, setSocket] = useState(null);
   const [isConnected, setIsConnected] = useState(false);
   const [clientId, setClientId] = useState(null);

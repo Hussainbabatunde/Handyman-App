@@ -24,7 +24,7 @@ const Dashboard = () => {
   const { dispatch, logoutUser, removeUserData, userData, jobTypes } =
     React.useContext<any>(AppContext);
     const {isSubmitting, getArtisanByProfessionApiCall, allArtisanByProfession} = useContext<any>(DashboardContext)
-    // console.log("userData: ", userData);
+    // console.log("userData: ", jobTypes);
     
   const navigation = useNavigation<StackNavigationProp<any>>();
     const activity = [
@@ -97,7 +97,7 @@ const Dashboard = () => {
         <Feather name="search" size={20} color="#FA4E61" />
         <TextInput style={{marginLeft: 11, flex: 1, fontSize: 14}} placeholder='Search here...' placeholderTextColor={"#898A8D"} />
       </View>
-            <Image source={WomanPainter} style={{width: '100%', height: 172, marginTop: 26}} />
+            <Image source={{uri: "https://res.cloudinary.com/dxqqnb15s/image/upload/v1758473501/my_app_uploads/q6ot8tokg7vmfxzukgk4.jpg"}} style={{width: '100%', height: 172, marginTop: 26}} />
             <View
   style={{
     marginTop: 20,
@@ -107,7 +107,7 @@ const Dashboard = () => {
     gap: 6
   }}
 >
-  {filteredJobTypes.map((each: any, index: number) => (
+  {jobTypes?.map((each: any, index: number) => (
     <Pressable
       key={index}
       style={{
@@ -133,7 +133,7 @@ const Dashboard = () => {
     })
        }}
     >
-      <Image source={each?.img} style={{ width: 30, height: 30 }} />
+      <Image source={{uri: each?.image}} style={{ width: 30, height: 30 }} />
       <TextMedium style={{ fontSize: 9, color: "black", textAlign: "center", marginTop: 2 }}>
         {each?.name}
       </TextMedium>

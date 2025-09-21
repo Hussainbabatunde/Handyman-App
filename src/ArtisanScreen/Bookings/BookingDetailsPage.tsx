@@ -351,7 +351,7 @@ await new Promise((resolve) => setTimeout(resolve, 1000));
                                       :
                 <View style={[styles.BodySpacing, { flex: 1 }]}>
                     <View style={{flex: 1}}>
-                    <View style={{ flexDirection: "row", alignItems: "center", marginTop: StatusBar.currentHeight }}>
+                    <View style={{ flexDirection: "row", alignItems: "center"}}>
                         <Pressable
                             accessible={true}
                             accessibilityRole="button"

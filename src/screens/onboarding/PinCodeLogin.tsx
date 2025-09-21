@@ -7,8 +7,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 // import { TextBold, TextMedium, TextRegular } from '../../components/StyledText'
 import { BackLogin } from '../../component/SvgFiles'
 import { OnboardContext } from '.'
-import { TextMedium } from '../../component/StyledText'
+import { TextMedium, TextRegular } from '../../component/StyledText'
 import { SafeAreaView } from "react-native-safe-area-context";
+import AppContext from '../../context'
+import ConfirmPhoneModal from '../../component/ConfirmPhoneNumber'
+import { maskMiddle } from '../../context/actions/utils'
 
 const { width } = Dimensions.get('window')
 
@@ -41,10 +44,10 @@ function DialPad({ onPress, showPassword, setShowPassword  }: DialPadProps) {
         }}>
         {item == 'biometrics' ?
 
-          <View style={styles.fingerPrint}>
+          <Pressable onPress={()=> setShowPassword(!showPassword)} style={styles.fingerPrint}>
             {/* <MaterialIcons name="fingerprint" size={43} color="#0075C9" /> */}
                         {showPassword?<Ionicons name="eye-outline" size={30} color="black" /> : <Ionicons name="eye-off-outline" size={30} color="black" />}
-          </View>
+          </Pressable>
           :
           item == 'del' ?
 
@@ -66,9 +69,14 @@ const PinCode = () => {
   const navigation = useNavigation<StackNavigationProp<any>>()
   const [confirm, setConfirm] = useState(false)
   const [forgotPassword, setForgotPassword] = useState(false)
-  const { validatePhoneRes, setValueSetupProfile, isSubmitting, loginApiCall } =
+  const { validatePhoneRes, phoneNumber, isSubmitting, loginApiCall } =
           useContext(OnboardContext);
   const [showPassword, setShowPassword] = useState(false)
+  const {identifier} = useContext<any>(AppContext)
+  const [modalVisible, setModalVisible] = useState(false);
+  const {identifierName, removeIdentifier, dispatch} = useContext<any>(AppContext)
+  // console.log("identifier: ", identifier);
+  
           
 
   useEffect(() => {
@@ -87,18 +95,19 @@ const PinCode = () => {
     // navigation.navigate('SignupSuccess')
   };
 
-  const handleSwitchUser = async ()=>{
-    await AsyncStorage.removeItem('phone_number')
-  }
 
   const handleForgotPassword = () =>{
   }
 
+  const handleSwitchUser = async ()=>{
+    await AsyncStorage.removeItem('identifierName')
+    await removeIdentifier(dispatch)
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ flex: 1, paddingHorizontal: 21 }}>
-        <View style={{ flexDirection: "row", alignItems: "center", marginTop: StatusBar.currentHeight }}>
+        <View style={{ flexDirection: "row", alignItems: "center", marginTop: StatusBar.currentHeight, justifyContent: "space-between" }}>
                             <Pressable
                                 accessible={true}
                                 accessibilityRole="button"
@@ -108,11 +117,14 @@ const PinCode = () => {
                             >
                                 <MaterialIcons name="arrow-back" size={22} color="#003585" />
                             </Pressable>
+                            <Pressable onPress={handleSwitchUser}>
+            <TextMedium  size={13}>Switch user</TextMedium>
+          </Pressable>
                         </View>
                             <Text
                                 style={[styles.nameIdentifier, { marginTop: 25, fontWeight: 600}]}
                             >
-                                Hi, {validatePhoneRes?.data?.firstName}
+                                Hi, {validatePhoneRes?.data?.firstName || identifier}
                             </Text>
                             <Text style={styles.descText}>Please enter your phone number below to get started</Text>
 
@@ -160,8 +172,8 @@ const PinCode = () => {
                         );
                       })}
                     </View>}
-          <Pressable onPress={() => setForgotPassword(!forgotPassword)}>
-            {/* <TextRegular style={styles.forgotPinText}>Forgot your PIN?</TextRegular> */}
+          <Pressable onPress={() => setModalVisible(!modalVisible)}>
+            <TextRegular style={styles.forgotPinText}>Forgot your PIN?</TextRegular>
           </Pressable>
         </View>
 
@@ -184,6 +196,15 @@ const PinCode = () => {
         </View>
 
       </View>
+      <ConfirmPhoneModal
+  visible={modalVisible}
+  phoneNumber={maskMiddle(identifierName || phoneNumber)}
+  onClose={() => setModalVisible(false)}
+  onSendOtp={() => {
+    console.log("Send OTP pressed");
+    setModalVisible(false);
+  }}
+/>
     </SafeAreaView>
   )
 }
@@ -235,8 +256,8 @@ const styles = StyleSheet.create({
     marginTop: '10%'
   },
   forgotPinText: {
-    color: '#0075C9',
-    marginTop: 10,
+    color: '#FA4E61',
+    marginTop: 20,
     fontWeight: '600',
     fontSize: 14
   },
